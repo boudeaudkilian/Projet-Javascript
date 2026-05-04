@@ -19,11 +19,11 @@ class Character {
 
 class Player extends Character {
     constructor() {
-        var shoot = false;
-        if (compshoot == true) {
-            shoot = true;
-        }
-        super("Sticky", 100, 100, 5, 5, 0, 0, [], true, 1, 0, 1, 0, shoot);
+        //var shoot = false;
+        //if (compshoot == true) {
+        //    shoot = true;
+        //}
+        super("Sticky", 100, 100, 5, 5, 0, 0, [], true, 1, 0, 1, 0, false);
     }
 }
 
