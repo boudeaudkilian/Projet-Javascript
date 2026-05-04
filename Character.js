@@ -28,13 +28,13 @@ class Player extends Character {
 }
 
 class Enemy extends Character {
-    constructor(name, maxHealth, currentHealth, strength, speed) {
+    constructor(name, maxHealth, currentHealth, strength, speed, positionx, positiony, statusEffects, facingR, attackRengec = 1, attackRenged = 5, attackcoldownc = 1, attackcoldownd = 1, canshoot = false) {
         super(name, maxHealth, currentHealth, strength, speed, 0, 0, [], false, 1, 1, 1, 1, false);
     }
 }
 
 class Boss extends Enemy {
-    constructor(name, maxHealth, currentHealth, strength, speed) {
+    constructor(name, maxHealth, currentHealth, strength, speed, positionx, positiony, statusEffects, facingR, attackRengec = 1, attackRenged = 5, attackcoldownc = 1, attackcoldownd = 1, canshoot = false) {
         super(name, maxHealth, currentHealth, strength, speed, 0, 0, [], false, 1, 5, 1, 5, false);
         this.isBoss = true;
     }
