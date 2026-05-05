@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Arbre de compétences</title>
+    <link rel="stylesheet" href="Skills.css">
+</head>
+<body>
+    <div class="skill-tree">
+        <h2>Arbre de compétences</h2>
+        <div class="pts">Points disponibles : <span id="pts-display">1</span></div>
+
+        <div class="row">
+            <div class="node">
+                <div class="card" id="card-epee" onclick="tryUnlock('epee')">
+                    <div class="card-icon">⚔️</div>
+                    <div class="card-name">Épée</div>
+                    <div class="card-desc">+5 force au corps à corps</div>
+                    <div class="card-cost" id="cost-epee">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card" id="card-arc" onclick="tryUnlock('arc')">
+                    <div class="card-icon">🏹</div>
+                    <div class="card-name">Arc</div>
+                    <div class="card-desc">Attaque à distance +3 force</div>
+                    <div class="card-cost" id="cost-arc">Coût : 1 pt</div>
+                </div>
+            </div>
+        </div>
+
+        <svg class="svg-conn" width="320" height="36" viewBox="0 0 320 36">
+            <line x1="80"  y1="0"  x2="80"  y2="18" stroke="#888" stroke-width="1"/>
+            <line x1="240" y1="0"  x2="240" y2="18" stroke="#888" stroke-width="1"/>
+            <line x1="80"  y1="18" x2="113" y2="18" stroke="#888" stroke-width="1"/>
+            <line x1="207" y1="18" x2="240" y2="18" stroke="#888" stroke-width="1"/>
+            <line x1="113" y1="18" x2="113" y2="36" stroke="#888" stroke-width="1"/>
+            <line x1="160" y1="18" x2="160" y2="36" stroke="#888" stroke-width="1"/>
+            <line x1="207" y1="18" x2="207" y2="36" stroke="#888" stroke-width="1"/>
+            <line x1="113" y1="18" x2="207" y2="18" stroke="#888" stroke-width="1"/>
+        </svg>
+
+        <div class="row">
+            <div class="node">
+                <div class="card locked" id="card-speed" onclick="tryUnlock('speed')">
+                    <div class="card-icon">💨</div>
+                    <div class="card-name">Speed+</div>
+                    <div class="card-desc">+1 vitesse de déplacement</div>
+                    <div class="card-cost" id="cost-speed">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card locked" id="card-strength" onclick="tryUnlock('strength')">
+                    <div class="card-icon">💪</div>
+                    <div class="card-name">Strength+</div>
+                    <div class="card-desc">+3 force d'attaque</div>
+                    <div class="card-cost" id="cost-strength">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card locked" id="card-life" onclick="tryUnlock('life')">
+                    <div class="card-icon">❤️</div>
+                    <div class="card-name">Life+</div>
+                    <div class="card-desc">+20 PV maximum</div>
+                    <div class="card-cost" id="cost-life">Coût : 1 pt</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="msg" id="msg"></div>
+        <div style="text-align:center">
+            <button class="reset-btn" onclick="resetTree()">Réinitialiser</button>
+        </div>
+    </div>
+
+    <script type="module" src="Skills-ui.js"></script>
+</body>
+</html>
