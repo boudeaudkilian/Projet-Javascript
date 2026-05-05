@@ -1,104 +1,83 @@
-import { player } from "./Character";
+import { player } from "./Character.js";
 
-class deplock {
-    constructor(name, description, effect, cost, up, deplock) {
-        this.name = name;
+class Skill {
+    constructor(name, description, cost, unlockedBy) {
+        this.name        = name;
         this.description = description;
-        this.effect = effect;
-        this.cost = cost;
-        this.deplock = deplock;
-        this.up = up;
+        this.cost        = cost;
+        this.unlocked    = false;
+        this.unlockedBy  = unlockedBy;
+        this.available   = unlockedBy === null;
     }
 }
 
-var epee = new deplock("Epee", "Vous obtenez une épée tranchante", "Permet d'infliger plus de dégâts qu'à main nue", 1, true, false);
-var arc = new deplock("Arc", "Vous obtenez un arc à longue portée", "Permet d'attaquer à distance", 1, true, false);
-var speed = new deplock("Speed+", "Vous obtenez un boost pour aller plus vite", "Augmente la vitesse de déplacement", 1, false, false);
-var strength = new deplock("Strength+", "Vous obtenez un boost pour être plus fort", "Augmente la force", 1, false, false);
-var life = new deplock("Life+", "Vous obtenez un boost pour être plus résistant", "Augmente la santé maximale", 1, false, false);
+const skills = {
+    epee:     new Skill("Epee",      "Vous obtenez une épée tranchante",          1, null),
+    arc:      new Skill("Arc",       "Vous obtenez un arc à longue portée",        1, null),
+    speed:    new Skill("Speed+",    "Augmente la vitesse de déplacement",         1, ["epee", "arc"]),
+    strength: new Skill("Strength+", "Augmente la force d'attaque",                1, ["epee", "arc"]),
+    life:     new Skill("Life+",     "Augmente la santé maximale",                 1, ["epee", "arc"]),
+};
 
-
-const ptc = 0;
-
-function Exp(Exp) {
-    if (Exp > 100) {
-        ptc = ptc + 1;
-        return ptc;
+function gainExp(amount) {
+    player.exp += amount;
+    if (player.exp >= 100) {
+        player.exp   -= 100;
+        player.level += 1;
+        player.ptc   += 1;
     }
 }
 
-function Competence(ptc) {
-    if (epee.up == true) {
-        if (ptc >= epee.cost) {
-            ptc = ptc - epee.cost;
-            epee.up = false;
-            epee.deplock = true;
-            if (speed.up == false) {
-                speed.up = true;
-            }
-            if (strength.up == false) {
-                strength.up = true;
-            }
-            if (life.up == false) {
-                life.up = true;
-            }
-        } else {
-            console.log("Vous n'avez pas assez de points de compétence pour débloquer cette compétence.");
-        }
-    }
-    if (arc.up == true) {
-        if (ptc >= arc.cost) {
-            ptc = ptc - arc.cost;
-            arc.up = false;
-            arc.deplock = true;
-            if (speed.up == false) {
-                speed.up = true;
-            }
-            if (strength.up == false) {
-                strength.up = true;
-            }
-            if (life.up == false) {
-                life.up = true;
-            }
-        } else {
-            console.log("Vous n'avez pas assez de points de compétence pour débloquer cette compétence.");
-        }
-    }
-    if (speed.up == true) {
-        if (ptc >= speed.cost) {
-            ptc = ptc - speed.cost;
-            speed.deplock = true;
-        } else {
-            console.log("Vous n'avez pas assez de points de compétence pour débloquer cette compétence.");
-        }
-    }
-    if (strength.up == true) {
-        if (ptc >= strength.cost) {
-            ptc = ptc - strength.cost;
-            strength.deplock = true;
-        } else {
-            console.log("Vous n'avez pas assez de points de compétence pour débloquer cette compétence.");
+function refreshAvailability() {
+    for (const key in skills) {
+        const skill = skills[key];
+        if (skill.unlocked || skill.available) continue;
+        if (Array.isArray(skill.unlockedBy)) {
+            skill.available = skill.unlockedBy.some(dep => skills[dep]?.unlocked);
         }
     }
 }
 
-function buff() {
-    if (epee.deplock == true) {
-        player.strength = player.strength + 5
+function unlockSkill(skillName) {
+    const skill = skills[skillName];
+    if (!skill) {
+        console.log("Compétence inconnue.");
+        return false;
     }
-    if (arc.deplock == true) {
-        player.canshoot = true;
+    if (skill.unlocked) {
+        console.log(`${skill.name} est déjà débloquée.`);
+        return false;
     }
-    if (speed.deplock == true) {
-        player.speed = player.speed + 1;
-        speed.deplock = false;
+    if (!skill.available) {
+        console.log(`${skill.name} n'est pas encore disponible.`);
+        return false;
     }
-    if (strength.deplock == true) {
-        player.strength = player.strength + 1;
-        strength.deplock = false;
+    if (player.ptc < skill.cost) {
+        console.log(`Pas assez de points. (${player.ptc}/${skill.cost})`);
+        return false;
     }
-    if (life.deplock == true) {
-        player.maxHealth = player.maxHealth + 10;
-        life.deplock = false;
+
+    player.ptc    -= skill.cost;
+    skill.unlocked = true;
+    Effect(skillName);
+    refreshAvailability();
+    return true;
+}
+
+function Effect(skillName) {
+    switch (skillName) {
+        case "epee":     player.strength      += 5;  break;
+        case "arc":
+            player.canshoot      = true;
+            player.strength      += 3;
+            break;
+        case "speed":    player.speed         += 1;  break;
+        case "strength": player.strength      += 3;  break;
+        case "life":
+            player.maxHealth     += 20;
+            player.currentHealth += 20;
+            break;
     }
 }
+
+export { skills, gainExp, unlockSkill };
