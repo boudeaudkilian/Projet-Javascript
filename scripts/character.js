@@ -1,49 +1,108 @@
+
+
 class Character {
-    constructor(name, maxHealth, currentHealth, strength, speed, positionx, positiony, statusEffects, facingR, attackRengec = 1, attackRenged = 5, attackcoldownc = 1, attackcoldownd = 1, canshoot = false) {
-        this.name     = name;
-        this.maxHealth   = maxHealth;
-        this.currentHealth = currentHealth;
+    constructor({
+        name,
+        maxHealth,
+        strength,
+        speed,
+        positionx = 0,
+        positiony = 0,
+        facingR = true,
+        attackRangeC = 60,   // portée corps à corps (px)
+        attackRangeD = 0,    // portée distance (0 = ne tire pas)
+        attackCooldownC = 600,  // ms entre 2 attaques CaC
+        attackCooldownD = 1000, // ms entre 2 tirs
+        canShoot = false,
+    }) {
+        this.name = name;
+        this.maxHealth = maxHealth;
+        this.currentHealth = maxHealth;
         this.strength = strength;
         this.speed = speed;
         this.positionx = positionx;
         this.positiony = positiony;
-        this.statusEffects = statusEffects;
         this.facingR = facingR;
-        this.attackRengec = attackRengec;
-        this.attackRenged = attackRenged;
-        this.attackcoldownc = attackcoldownc;
-        this.attackcoldownd = attackcoldownd;
-        this.canshoot = canshoot;
+        this.attackRangeC = attackRangeC;
+        this.attackRangeD = attackRangeD;
+        this.attackCooldownC = attackCooldownC;
+        this.attackCooldownD = attackCooldownD;
+        this.canShoot = canShoot;
+
+        // État runtime
+        this.isDefending = false;
+        this.statusEffects = [];
+        this.lastMeleeAt = 0;
+        this.lastRangedAt = 0;
+        this.isAlive = true;
+    }
+
+    isOnCooldownMelee() {
+        return performance.now() - this.lastMeleeAt < this.attackCooldownC;
+    }
+    isOnCooldownRanged() {
+        return performance.now() - this.lastRangedAt < this.attackCooldownD;
     }
 }
 
 class Player extends Character {
     constructor() {
-        //var shoot = false;
-        //if (compshoot == true) {
-        //    shoot = true;
-        //}
-        super("Sticky", 100, 100, 5, 5, 0, 0, [], true, 1, 0, 1, 0, false);
+        super({
+            name: "Sticky",
+            maxHealth: 100,
+            strength: 10,
+            speed: 6,
+            facingR: true,
+            attackRangeC: 70,
+            attackRangeD: 800,
+            attackCooldownC: 400,
+            attackCooldownD: 700,
+            canShoot: true,
+        });
     }
 }
 
 class Enemy extends Character {
-    constructor(name, maxHealth, currentHealth, strength, speed, positionx, positiony, statusEffects, facingR, attackRengec = 1, attackRenged = 5, attackcoldownc = 1, attackcoldownd = 1, canshoot = false) {
-        super(name, maxHealth, currentHealth, strength, speed, 0, 0, [], false, 1, 1, 1, 1, false);
+    constructor(opts) {
+        super({ facingR: false, ...opts });
+        this.isEnemy = true;
     }
 }
 
 class Boss extends Enemy {
-    constructor(name, maxHealth, currentHealth, strength, speed, positionx, positiony, statusEffects, facingR, attackRengec = 1, attackRenged = 5, attackcoldownc = 1, attackcoldownd = 1, canshoot = false) {
-        super(name, maxHealth, currentHealth, strength, speed, 0, 0, [], false, 1, 5, 1, 5, false);
+    constructor(opts) {
+        super(opts);
         this.isBoss = true;
     }
 }
 
-var player = new Player();
-var enemy1 = new Enemy("Vif-Lame",  100,  100,  10,  20, 0, 0, [], false, 1, 0, 1, 0, false);
-var enemy2 = new Enemy("Arc Calme",     100,  100,  15,  10, 0, 0, [], false, 0, 5, 0, 5, false);
-var enemy3 = new Enemy("Colosse Stable",   250,  250,  15,  5, 0, 0, [], false, 1, 0, 1, 0, false);
-var boss1 = new Boss("Titan Imperçable",  500,  500, 50,  5, 0, 0, [], false, 1, 5, 1, 5, false);
-var boss2 = new Boss("Maître des Ombres",  300,  300,  50,  20, 0, 0, [], false, 1, 5, 1, 5, false);
-export { player, enemy1, enemy2, enemy3, boss1, boss2 };
+// Instances de base
+const player = new Player();
+
+const enemy1 = new Enemy({
+    name: "Vif-Lame", maxHealth: 80, strength: 8, speed: 4,
+    attackRangeC: 70, attackRangeD: 0,
+    attackCooldownC: 800, attackCooldownD: 0, canShoot: false,
+});
+const enemy2 = new Enemy({
+    name: "Arc Calme", maxHealth: 70, strength: 10, speed: 2,
+    attackRangeC: 60, attackRangeD: 600,
+    attackCooldownC: 900, attackCooldownD: 1500, canShoot: true,
+});
+const enemy3 = new Enemy({
+    name: "Colosse Stable", maxHealth: 200, strength: 14, speed: 2,
+    attackRangeC: 80, attackRangeD: 0,
+    attackCooldownC: 1100, attackCooldownD: 0, canShoot: false,
+});
+const boss1 = new Boss({
+    name: "Titan Imperçable", maxHealth: 400, strength: 22, speed: 2,
+    attackRangeC: 90, attackRangeD: 700,
+    attackCooldownC: 1000, attackCooldownD: 1800, canShoot: true,
+});
+const boss2 = new Boss({
+    name: "Maître des Ombres", maxHealth: 300, strength: 28, speed: 5,
+    attackRangeC: 80, attackRangeD: 700,
+    attackCooldownC: 700, attackCooldownD: 1400, canShoot: true,
+});
+
+export { Character, Player, Enemy, Boss, player, enemy1, enemy2, enemy3, boss1, boss2 };

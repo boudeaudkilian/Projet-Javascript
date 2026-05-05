@@ -1,214 +1,221 @@
-// ===== SYSTÈME DE COMBAT - Stickman RPG =====
+
 import {
-    playerElement,
-    enemyElement,
-    updatePosition,
-    updateHealthBar,
-    logToConsole,
-    flashDamage,
-    knockback,
-    playerHealthBar,
-    enemyHealthBar,
-    playerHPText,
-    enemyHPText
+    playerElement, enemyElement,
+    playerHealthBar, enemyHealthBar,
+    playerHPText, enemyHPText,
+    updatePosition, updateHealthBar,
+    logToConsole, flashDamage, playAttackAnim, knockback,
+    spawnProjectileElement, updateProjectileElement, removeProjectileElement,
+    getArenaBounds, showEndScreen,
 } from './visuel.js';
 import { player } from './character.js';
 
-// Vérifie si une attaque corps à corps peut toucher
-const peutToucher = (attaquant, cible) => {
-    let distance = Math.abs(cible.positionx - attaquant.positionx);
-    
-    if (distance <= attaquant.attackRengec) {
-        return true;
-    } else {
-        return false;
-    }
-}
+// État global du combat
+const combatState = {
+    over: false,
+    projectiles: [],
+    enemy: null, // sera défini par main.js via setEnemy()
+};
 
-// Applique les dégâts à la cible (avec gestion de la défense)
+const setEnemy = (enemy) => { combatState.enemy = enemy; };
+
+// Helpers d'accès aux éléments visuels selon le personnage
+const getVisualFor = (personnage) => {
+    if (personnage === player) {
+        return { element: playerElement, healthBar: playerHealthBar, hpText: playerHPText };
+    }
+    return { element: enemyElement, healthBar: enemyHealthBar, hpText: enemyHPText };
+};
+
+// Vérifie si une attaque corps à corps peut toucher (orientation prise en compte)
+const peutToucher = (attaquant, cible) => {
+    const dx = cible.positionx - attaquant.positionx;
+    const distance = Math.abs(dx);
+    if (distance > attaquant.attackRangeC) return false;
+    // L'attaquant doit faire face à la cible
+    if (attaquant.facingR && dx < 0) return false;
+    if (!attaquant.facingR && dx > 0) return false;
+    return true;
+};
+
+// Applique les dégâts (gère défense + KO + fin de combat)
 const recevoirDegats = (cible, degats) => {
-    // Si la cible se défend, réduit les dégâts de 50%
+    if (combatState.over || !cible.isAlive) return;
+
     if (cible.isDefending) {
-        degats = degats * 0.5;
-        const msg = cible.name + " bloque une partie des dégâts ! 🛡️";
-        console.log(msg);
-        logToConsole(msg);
+        degats = Math.round(degats * 0.5);
+        logToConsole(`${cible.name} bloque une partie des dégâts ! 🛡️`);
     }
-    
+
     cible.currentHealth -= degats;
-    const msgDegats = cible.name + " perd " + degats + " PV";
-    console.log(msgDegats);
-    logToConsole(msgDegats);
-    
-    // Détermine quel élément et quelle barre de vie utiliser
-    let element, healthBar, hpText;
-    
-    if (cible === player) {
-        element = playerElement;
-        healthBar = playerHealthBar;
-        hpText = playerHPText;
-    } else {
-        element = enemyElement;
-        healthBar = enemyHealthBar;
-        hpText = enemyHPText;
-    }
-    
-    // Effets visuels
+    logToConsole(`${cible.name} perd ${degats} PV`);
+
+    const { element, healthBar, hpText } = getVisualFor(cible);
     flashDamage(element);
     updateHealthBar(cible, healthBar, hpText);
-    
+
     if (cible.currentHealth <= 0) {
         cible.currentHealth = 0;
-        const msgKO = cible.name + " est K.O. !";
-        console.log(msgKO);
-        logToConsole(msgKO);
+        cible.isAlive = false;
         updateHealthBar(cible, healthBar, hpText);
+        endCombat(cible);
     }
-}
+};
 
-// Attaque corps à corps
+// Termine le combat et émet un événement écoutable par le reste du jeu
+const endCombat = (loser) => {
+    if (combatState.over) return;
+    combatState.over = true;
+    const winner = loser === player ? combatState.enemy : player;
+    logToConsole(`${loser.name} est K.O. ! 🏁`);
+    logToConsole(`${winner.name} remporte le combat !`);
+    showEndScreen(winner.name, winner === player);
+    // Event personnalisé : la partie XP/progression peut s'y abonner
+    window.dispatchEvent(new CustomEvent('combatEnd', {
+        detail: { winner, loser, isPlayerWin: winner === player }
+    }));
+};
+
+// Met à jour l'orientation (facingR) en fonction de la cible
+const faceTarget = (perso, cible) => {
+    perso.facingR = cible.positionx >= perso.positionx;
+};
+
+// ---------- ATTAQUES ----------
+
+// Attaque corps à corps (avec cooldown)
 const attaquer = (attaquant, cible) => {
-    const msg = attaquant.name + " attaque " + cible.name + " !";
-    console.log(msg);
-    logToConsole(msg);
-    
-    if (peutToucher(attaquant, cible)) {
-        const msgTouche = "L'attaque touche !";
-        console.log(msgTouche);
-        logToConsole(msgTouche);
-        
-        // Effet de knockback visuel
-        const direction = attaquant.positionx < cible.positionx ? "droite" : "gauche";
-        const targetElement = cible === player ? playerElement : enemyElement;
-        knockback(cible, targetElement, direction);
-        
-        recevoirDegats(cible, attaquant.strength);
-    } else {
-        const msgRate = "L'attaque rate ! Trop loin.";
-        console.log(msgRate);
-        logToConsole(msgRate);
-    }
-}
-
-// Déplace un personnage
-const deplacer = (personnage, direction) => {
-    if (direction === "droite") {
-        personnage.positionx += personnage.speed;
-    } else if (direction === "gauche") {
-        personnage.positionx -= personnage.speed;
-    }
-    
-    // Détermine quel élément visuel mettre à jour
-    const element = personnage === player ? playerElement : enemyElement;
-    
-    // Mise à jour visuelle
-    updatePosition(personnage, element);
-    
-    const message = personnage.name + " se déplace vers la " + direction + " → position : " + personnage.positionx;
-    console.log(message);
-    logToConsole(message);
-}
-
-// Crée un projectile
-const tirerProjectile = (attaquant) => {
-    let projectile = {
-        positionx: attaquant.positionx,
-        positiony: attaquant.positiony,
-        vitesse: 10,
-        direction: attaquant.facingR ? "droite" : "gauche",
-        degats: attaquant.strength,
-        taille: 5,
-        tireur: attaquant
-    };
-    
-    const msg = attaquant.name + " tire un projectile !";
-    console.log(msg);
-    logToConsole(msg);
-    return projectile;
-}
-
-// Déplace un projectile
-const deplacerProjectile = (projectile) => {
-    if (projectile.direction === "droite") {
-        projectile.positionx += projectile.vitesse;
-    } else if (projectile.direction === "gauche") {
-        projectile.positionx -= projectile.vitesse;
-    }
-}
-
-// Vérifie si un projectile touche une cible
-const projectileTouche = (projectile, cible) => {
-    let distance = Math.abs(cible.positionx - projectile.positionx);
-    
-    if (distance <= projectile.taille) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-// Attaque à distance avec projectile
-const attaquerDistance = (attaquant, cible) => {
-    // Vérifie si l'attaquant peut tirer
-    if (!attaquant.canshoot) {
-        const msg = attaquant.name + " ne peut pas tirer à distance !";
-        console.log(msg);
-        logToConsole(msg);
+    if (combatState.over || !attaquant.isAlive || !cible.isAlive) return;
+    if (attaquant.isOnCooldownMelee()) {
+        logToConsole(`${attaquant.name} : attaque CaC en recharge…`);
         return;
     }
-    
-    // Crée le projectile
-    let projectile = tirerProjectile(attaquant);
-    
-    // Simule le déplacement du projectile
-    let maxDistance = 300;
-    let deplacementTotal = 0;
-    
-    while (deplacementTotal < maxDistance) {
-        deplacerProjectile(projectile);
-        deplacementTotal += projectile.vitesse;
-        
-        // Vérifie si le projectile touche la cible
-        if (projectileTouche(projectile, cible)) {
-            const msg = "💥 Le projectile touche " + cible.name + " !";
-            console.log(msg);
-            logToConsole(msg);
-            recevoirDegats(cible, projectile.degats);
-            return;
+    attaquant.lastMeleeAt = performance.now();
+    faceTarget(attaquant, cible);
+
+    const { element: attackerEl } = getVisualFor(attaquant);
+    playAttackAnim(attackerEl);
+
+    logToConsole(`${attaquant.name} attaque ${cible.name} !`);
+
+    if (peutToucher(attaquant, cible)) {
+        logToConsole(`L'attaque touche !`);
+        const direction = attaquant.positionx < cible.positionx ? "droite" : "gauche";
+        const { element: targetEl } = getVisualFor(cible);
+        knockback(cible, targetEl, direction);
+        recevoirDegats(cible, attaquant.strength);
+    } else {
+        logToConsole(`L'attaque rate ! Trop loin ou mauvaise direction.`);
+    }
+};
+
+// Déplacement (borné par l'arène)
+const deplacer = (personnage, direction) => {
+    if (combatState.over || !personnage.isAlive) return;
+    const { min, max } = getArenaBounds();
+
+    if (direction === "droite") {
+        personnage.positionx = Math.min(max, personnage.positionx + personnage.speed);
+        personnage.facingR = true;
+    } else if (direction === "gauche") {
+        personnage.positionx = Math.max(min, personnage.positionx - personnage.speed);
+        personnage.facingR = false;
+    }
+
+    const { element } = getVisualFor(personnage);
+    updatePosition(personnage, element);
+};
+
+// ---------- PROJECTILES ----------
+
+const tirerProjectile = (attaquant, cible) => {
+    faceTarget(attaquant, cible);
+    const projectile = {
+        positionx: attaquant.positionx + (attaquant.facingR ? 50 : 10),
+        positiony: 0,
+        vitesse: 14,
+        direction: attaquant.facingR ? "droite" : "gauche",
+        degats: attaquant.strength,
+        taille: 30,
+        tireur: attaquant,
+        cible,
+        element: null,
+        alive: true,
+    };
+    spawnProjectileElement(projectile);
+    combatState.projectiles.push(projectile);
+    logToConsole(`${attaquant.name} tire un projectile !`);
+    return projectile;
+};
+
+const projectileTouche = (projectile, cible) =>
+    Math.abs(cible.positionx + 30 - projectile.positionx) <= projectile.taille;
+
+// Attaque à distance (avec cooldown + portée max)
+const attaquerDistance = (attaquant, cible) => {
+    if (combatState.over || !attaquant.isAlive || !cible.isAlive) return;
+    if (!attaquant.canShoot || attaquant.attackRangeD <= 0) {
+        logToConsole(`${attaquant.name} ne peut pas tirer à distance !`);
+        return;
+    }
+    if (attaquant.isOnCooldownRanged()) {
+        logToConsole(`${attaquant.name} : tir en recharge…`);
+        return;
+    }
+    attaquant.lastRangedAt = performance.now();
+    tirerProjectile(attaquant, cible);
+};
+
+// Mise à jour des projectiles à chaque frame (appelée par la game loop)
+const updateProjectiles = () => {
+    const { min, max } = getArenaBounds();
+    for (let i = combatState.projectiles.length - 1; i >= 0; i--) {
+        const p = combatState.projectiles[i];
+        if (!p.alive) continue;
+
+        p.positionx += p.direction === "droite" ? p.vitesse : -p.vitesse;
+        updateProjectileElement(p);
+
+        // Distance parcourue dépassée OU sortie d'arène
+        if (p.positionx < min - 50 || p.positionx > max + 50) {
+            p.alive = false;
+            removeProjectileElement(p);
+            combatState.projectiles.splice(i, 1);
+            logToConsole(`Le projectile n'a touché personne…`);
+            continue;
+        }
+
+        // Collision avec la cible
+        const cibles = [player, combatState.enemy].filter(c => c && c !== p.tireur && c.isAlive);
+        for (const c of cibles) {
+            if (projectileTouche(p, c)) {
+                logToConsole(`💥 Le projectile touche ${c.name} !`);
+                recevoirDegats(c, p.degats);
+                p.alive = false;
+                removeProjectileElement(p);
+                combatState.projectiles.splice(i, 1);
+                break;
+            }
         }
     }
-    
-    const msg = "Le projectile n'a touché personne...";
-    console.log(msg);
-    logToConsole(msg);
-}
+};
 
-// Active la défense
+// ---------- DÉFENSE ----------
 const activerDefense = (personnage) => {
+    if (combatState.over) return;
     personnage.isDefending = true;
-    const msg = personnage.name + " se met en position de défense ! 🛡️";
-    console.log(msg);
-    logToConsole(msg);
-}
-
-// Désactive la défense
+    logToConsole(`${personnage.name} se met en position de défense ! 🛡️`);
+};
 const desactiverDefense = (personnage) => {
     personnage.isDefending = false;
-    const msg = personnage.name + " arrête de se défendre.";
-    console.log(msg);
-    logToConsole(msg);
-}
+    logToConsole(`${personnage.name} arrête de se défendre.`);
+};
 
-// Export de toutes les fonctions
-export { 
-    peutToucher, 
-    recevoirDegats, 
-    attaquer, 
-    deplacer,
-    tirerProjectile,
-    deplacerProjectile,
-    projectileTouche,
-    attaquerDistance,
-    activerDefense,
-    desactiverDefense
+export {
+    combatState, setEnemy,
+    peutToucher, recevoirDegats,
+    attaquer, deplacer,
+    tirerProjectile, attaquerDistance, updateProjectiles,
+    activerDefense, desactiverDefense,
+    endCombat,
 };
