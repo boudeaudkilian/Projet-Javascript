@@ -12,18 +12,18 @@
 
         <div class="row">
             <div class="node">
-                <div class="card" id="card-epee" onclick="tryUnlock('epee')">
+                <div class="card card-epee" id="card-epee" onclick="tryUnlock('epee')">
                     <div class="card-icon">⚔️</div>
                     <div class="card-name">Épée</div>
-                    <div class="card-desc">+5 force au corps à corps</div>
+                    <div class="card-desc">+10 force au corps à corps</div>
                     <div class="card-cost" id="cost-epee">Coût : 1 pt</div>
                 </div>
             </div>
             <div class="node">
-                <div class="card" id="card-arc" onclick="tryUnlock('arc')">
+                <div class="card card-arc" id="card-arc" onclick="tryUnlock('arc')">
                     <div class="card-icon">🏹</div>
                     <div class="card-name">Arc</div>
-                    <div class="card-desc">Attaque à distance +3 force</div>
+                    <div class="card-desc">Attaque à distance +5 force</div>
                     <div class="card-cost" id="cost-arc">Coût : 1 pt</div>
                 </div>
             </div>
@@ -42,27 +42,94 @@
 
         <div class="row">
             <div class="node">
-                <div class="card locked" id="card-speed" onclick="tryUnlock('speed')">
+                <div class="card player" id="card-player">
+                    <div class="card-icon">🧍</div>
+                    <div class="card-name" id="player-name"></div>
+                    <div class="card-desc">Personnage principal</div>
+                    <div class="card-stat">life : <span id="player-life"></span></div>
+                    <div class="card-stat">strength : <span id="player-strength"></span></div>
+                    <div class="card-stat">speed : <span id="player-speed"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="node">
+                <div class="card locked card-speed1" onclick="tryUnlock('speed1')">
                     <div class="card-icon">💨</div>
                     <div class="card-name">Speed+</div>
-                    <div class="card-desc">+1 vitesse de déplacement</div>
-                    <div class="card-cost" id="cost-speed">Coût : 1 pt</div>
+                    <div class="card-desc">+2 vitesse de déplacement</div>
+                    <div class="card-cost cost-speed1">Coût : 1 pt</div>
                 </div>
             </div>
             <div class="node">
-                <div class="card locked" id="card-strength" onclick="tryUnlock('strength')">
+                <div class="card locked card-strength1" onclick="tryUnlock('strength1')">
                     <div class="card-icon">💪</div>
                     <div class="card-name">Strength+</div>
-                    <div class="card-desc">+3 force d'attaque</div>
-                    <div class="card-cost" id="cost-strength">Coût : 1 pt</div>
+                    <div class="card-desc">+5 force d'attaque</div>
+                    <div class="card-cost cost-strength1">Coût : 1 pt</div>
                 </div>
             </div>
             <div class="node">
-                <div class="card locked" id="card-life" onclick="tryUnlock('life')">
+                <div class="card locked card-life1" onclick="tryUnlock('life1')">
                     <div class="card-icon">❤️</div>
                     <div class="card-name">Life+</div>
-                    <div class="card-desc">+20 PV maximum</div>
-                    <div class="card-cost" id="cost-life">Coût : 1 pt</div>
+                    <div class="card-desc">+50 PV maximum</div>
+                    <div class="card-cost cost-life1">Coût : 1 pt</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="node">
+                <div class="card locked card-speed2" onclick="tryUnlock('speed2')">
+                    <div class="card-icon">💨</div>
+                    <div class="card-name">Speed+</div>
+                    <div class="card-desc">+2 vitesse de déplacement</div>
+                    <div class="card-cost cost-speed2">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card locked card-strength2" onclick="tryUnlock('strength2')">
+                    <div class="card-icon">💪</div>
+                    <div class="card-name">Strength+</div>
+                    <div class="card-desc">+5 force d'attaque</div>
+                    <div class="card-cost cost-strength2">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card locked card-life2" onclick="tryUnlock('life2')">
+                    <div class="card-icon">❤️</div>
+                    <div class="card-name">Life+</div>
+                    <div class="card-desc">+50 PV maximum</div>
+                    <div class="card-cost cost-life2">Coût : 1 pt</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="node">
+                <div class="card locked card-speed3" onclick="tryUnlock('speed3')">
+                    <div class="card-icon">💨</div>
+                    <div class="card-name">Speed+</div>
+                    <div class="card-desc">+2 vitesse de déplacement</div>
+                    <div class="card-cost cost-speed3">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card locked card-strength3" onclick="tryUnlock('strength3')">
+                    <div class="card-icon">💪</div>
+                    <div class="card-name">Strength+</div>
+                    <div class="card-desc">+5 force d'attaque</div>
+                    <div class="card-cost cost-strength3">Coût : 1 pt</div>
+                </div>
+            </div>
+            <div class="node">
+                <div class="card locked card-life3" onclick="tryUnlock('life3')">
+                    <div class="card-icon">❤️</div>
+                    <div class="card-name">Life+</div>
+                    <div class="card-desc">+50 PV maximum</div>
+                    <div class="card-cost cost-life3">Coût : 1 pt</div>
                 </div>
             </div>
         </div>
@@ -73,6 +140,6 @@
         </div>
     </div>
 
-    <script type="module" src="Skills-ui.js"></script>
+    <script type="module" src="Skills_sadow.js"></script>
 </body>
 </html>
