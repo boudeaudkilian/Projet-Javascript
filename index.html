@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickman RPG - Combat Arena</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- Zone d'informations de combat -->
+    <div id="combat-hud">
+        <!-- Infos Joueur -->
+        <div class="player-info">
+            <h2 id="player-name">Sticky</h2>
+            <div class="health-bar-container">
+                <div id="player-health-bar" class="health-bar"></div>
+            </div>
+            <p id="player-hp-text">100 / 100 HP</p>
+        </div>
+        
+        <!-- Infos Ennemi -->
+        <div class="enemy-info">
+            <h2 id="enemy-name">Ennemi</h2>
+            <div class="health-bar-container">
+                <div id="enemy-health-bar" class="health-bar"></div>
+            </div>
+            <p id="enemy-hp-text">100 / 100 HP</p>
+        </div>
+    </div>
+    
+    <!-- Arène de combat -->
+    <div id="arena">
+        <!-- Personnage Joueur -->
+        <div id="player-character" class="character">
+            <div class="stickman">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="arm-left"></div>
+                <div class="arm-right"></div>
+                <div class="leg-left"></div>
+                <div class="leg-right"></div>
+            </div>
+        </div>
+        
+        <!-- Personnage Ennemi -->
+        <div id="enemy-character" class="character enemy">
+            <div class="stickman">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="arm-left"></div>
+                <div class="arm-right"></div>
+                <div class="leg-left"></div>
+                <div class="leg-right"></div>
+            </div>
+        </div>
+        
+        <!-- Projectiles apparaîtront ici -->
+        <div id="projectiles-container"></div>
+    </div>
+    
+    <!-- Contrôles -->
+    <div id="controls">
+        <h3>Contrôles (temporaires pour test) :</h3>
+        <button onclick="testDeplacer('gauche')">← Gauche</button>
+        <button onclick="testDeplacer('droite')">→ Droite</button>
+        <button onclick="testAttaquer()">⚔️ Attaque</button>
+        <button onclick="testAttaqueDistance()">🏹 Tir</button>
+        <button onclick="testDefense()">🛡️ Défense</button>
+    </div>
+    
+    <!-- Console de debug -->
+    <div id="debug-console">
+        <h4>Console :</h4>
+        <div id="console-output"></div>
+    </div>
+    
+    <script type="module" src="scripts/main.js"></script>
+</body>
+</html>
