@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickman RPG Combat</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- Menu d'accueil -->
+    <div id="homeScreen" class="screen active">
+        <div class="home-container">
+            <div class="game-title">
+                <h1>STICKMAN</h1>
+                <h2>RPG COMBAT</h2>
+                <div class="title-decoration"></div>
+            </div>
+
+            <div class="stickman-hero">
+                <div class="stickman">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="arms">
+                        <div class="arm left"></div>
+                        <div class="arm right"></div>
+                    </div>
+                    <div class="legs">
+                        <div class="leg left"></div>
+                        <div class="leg right"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-buttons">
+                <button id="startBtn" class="btn btn-primary">
+                    <span>COMMENCER</span>
+                </button>
+                <button id="instructionsBtn" class="btn btn-secondary">
+                    <span>CONTRÔLES</span>
+                </button>
+            </div>
+
+            <div class="footer-text">
+                <p>Affrontez des ennemis, des tanks • Débloquez des compétences • Devenez légendaire</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu principal -->
+    <div id="mainMenu" class="screen">
+        <div class="menu-container">
+            <h1>MENU PRINCIPAL</h1>
+            <div class="menu-options">
+                <button id="resumeBtn" class="btn btn-primary">Reprendre</button>
+                <button id="newGameBtn" class="btn btn-primary">Nouvelle Partie</button>
+                <button id="skillsBtn" class="btn btn-secondary">Compétences</button>
+                <button id="backToHomeBtn" class="btn btn-secondary">Accueil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran d'instructions -->
+    <div id="instructionsScreen" class="screen">
+        <div class="instructions-container">
+            <h1>CONTRÔLES</h1>
+            <div class="instructions-content">
+                <div class="instruction-item">
+                    <h3>Déplacement</h3>
+                    <p>Flèches ← → ou Clics boutons</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>Attaque Rapprochée</h3>
+                    <p>A ou Clic Attaque</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>Projectile</h3>
+                    <p>S ou Clic Projectile</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>Défense</h3>
+                    <p>D ou Clic Défense</p>
+                </div>
+            </div>
+            <button id="backFromInstructionsBtn" class="btn btn-secondary">Retour</button>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
