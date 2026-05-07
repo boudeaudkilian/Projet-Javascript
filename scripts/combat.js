@@ -1,13 +1,5 @@
 
-import {
-    playerElement, enemyElement,
-    playerHealthBar, enemyHealthBar,
-    playerHPText, enemyHPText,
-    updatePosition, updateHealthBar,
-    logToConsole, flashDamage, playAttackAnim, knockback,
-    spawnProjectileElement, updateProjectileElement, removeProjectileElement,
-    getArenaBounds, showEndScreen,
-} from './visuel.js';
+import { playerElement, enemyElement, playerHealthBar, enemyHealthBar, playerHPText, enemyHPText, updatePosition, updateHealthBar, logToConsole, flashDamage, playAttackAnim, knockback, spawnProjectileElement, updateProjectileElement, removeProjectileElement, getArenaBounds, showEndScreen } from './visuel.js';
 import { player } from './Character.js';
 
 // État global du combat

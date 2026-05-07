@@ -1,4 +1,4 @@
-import { player } from "./Character.js";
+import { player } from './Character.js';
 
 class Skill {
     constructor(name, description, cost, unlockedBy) {
@@ -68,9 +68,9 @@ function Effect(skillName) {
             player.maxHealth     += 50;
             player.currentHealth += 50; break;
         case skillName === "epee":
-            player.strength      += 10;  break;
+            player.strength      += 10; break;
         case skillName === "arc":
-            player.canshoot       = true;
+            player.canShoot       = true;
             player.strength      += 5;  break;
     }
 }

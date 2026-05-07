@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Arbre de compétences</title>
-    <link rel="stylesheet" href="../styles/Skills.css">
+    <link rel="stylesheet" href="./styles/Skills.css">
 </head>
 <body>
     <div class="skill-tree">
@@ -133,22 +133,13 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="node">
-                <div class="msg" id="msg"></div>
-                <div style="text-align:center">
-                    <button class="reset-btn" onclick="resetTree()">Réinitialiser</button>
-                </div>
+        <<div class="msg" id="msg"></div>
+            <div style="text-align:center; display:flex; gap:1rem; justify-content:center; margin-top:1rem;">
+                <button class="reset-btn" onclick="resetTree()">Réinitialiser</button>
+                <button class="reset-btn" onclick="window.location.href='./index.html'">Retour</button>
             </div>
-            <div class="node">
-                <div class="msg" id="msg"></div>
-                <div style="text-align:center">
-                    <button class="reset-btn" onclick="window.location.href='index.html'">Retour</button>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <script type="module" src="../scripts/Skills_shadow.js"></script>
+    <script type="module" src="./scripts/Skills_shadow.js"></script>
 </body>
 </html>

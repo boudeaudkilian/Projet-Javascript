@@ -1,5 +1,5 @@
-import { player } from "./Character.js";
-import { skills, unlockSkill } from "./Skills.js";
+import { player } from './Character.js';
+import { skills, unlockSkill } from './Skills.js';
 
 function showMsg(text) {
     const el = document.getElementById("msg");
@@ -52,8 +52,10 @@ window.resetTree = function() {
         if (skills[key].unlocked) {
             player.ptc += 1;
             if (key === "epee")                    player.strength      -= 10;
-            if (key === "arc")                   { player.canshoot       = false;
-                                                   player.strength      -= 5; }
+            if (key === "arc") {
+                                                    player.canShoot  = false;
+                                                    player.strength -= 5;
+                                }
             if (key.startsWith("speed"))           player.speed         -= 2;
             if (key.startsWith("strength"))        player.strength      -= 5;
             if (key.startsWith("life"))          { player.maxHealth     -= 50;

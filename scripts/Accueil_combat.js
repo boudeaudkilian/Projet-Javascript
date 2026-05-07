@@ -1,18 +1,8 @@
 // ===== POINT D'ENTRÉE - du jeu =====
 import { player, enemy1 } from './Character.js';
-import {
-    attaquer, deplacer, attaquerDistance,
-    activerDefense, desactiverDefense,
-    setEnemy, updateProjectiles, combatState,
-} from './combat.js';
+import { attaquer, deplacer, attaquerDistance, activerDefense, desactiverDefense, setEnemy, updateProjectiles, combatState } from './combat.js';
 import { updateEnemyAI } from './ia.js';
-import {
-    playerElement, enemyElement,
-    playerHealthBar, enemyHealthBar,
-    playerHPText, enemyHPText,
-    updatePosition, updateHealthBar, setNames,
-    logToConsole, getArenaBounds,
-} from './visuel.js';
+import { playerElement, enemyElement, playerHealthBar, enemyHealthBar, playerHPText, enemyHPText, updatePosition, updateHealthBar, setNames, logToConsole, getArenaBounds } from './visuel.js';
 
 // --- Choix de l'ennemi (modifiable plus tard par la partie "niveaux") ---
 const currentEnemy = enemy1;
