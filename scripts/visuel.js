@@ -12,8 +12,7 @@ const projectilesContainer = document.getElementById('projectiles-container');
 const consoleOutput   = document.getElementById('console-output');
 const arenaEl         = document.getElementById('arena');
 
-// IMPORTANT : on supprime tout positionnement CSS résiduel (right/left)
-// et on pilote la position uniquement via style.left + transform.
+// On pilote la position uniquement via style.left + transform
 const initElement = (el) => {
     el.style.right = 'auto';
     el.style.left = '0px';
@@ -21,19 +20,15 @@ const initElement = (el) => {
 initElement(playerElement);
 initElement(enemyElement);
 
-// Met à jour la position visuelle d'un personnage
 const updatePosition = (personnage, element) => {
     element.style.left = personnage.positionx + 'px';
-    // Retourne le sprite selon l'orientation
     const baseScale = personnage.facingR ? 1 : -1;
-    // Ne pas écraser une animation en cours : on stocke l'échelle dans un dataset
     element.dataset.scaleX = String(baseScale);
     if (!element.classList.contains('attacking')) {
         element.style.transform = `scaleX(${baseScale})`;
     }
 };
 
-// Met à jour la barre de vie + état low-health
 const updateHealthBar = (personnage, healthBar, hpText) => {
     const pct = Math.max(0, (personnage.currentHealth / personnage.maxHealth) * 100);
     healthBar.style.width = pct + '%';
@@ -47,26 +42,45 @@ const setNames = (player, enemy) => {
     enemyNameEl.textContent  = enemy.name;
 };
 
-// Console de debug
+// Personnalise visuellement l'ennemi selon son type (boss/ultra/normal)
+const applyEnemyVisual = (enemy) => {
+    enemyElement.classList.remove('boss', 'ultra', 'normal');
+    enemyElement.classList.add(enemy.kind || 'normal');
+    if (enemy.color) enemyElement.style.setProperty('--enemy-color', enemy.color);
+    // Appliquer un scale visuel via dataset (consommé par CSS)
+    enemyElement.dataset.kind = enemy.kind || 'normal';
+};
+
+// Affiche une bannière temporaire en haut de l'arène
+const showBanner = (text) => {
+    let banner = document.getElementById('arena-banner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'arena-banner';
+        arenaEl.appendChild(banner);
+    }
+    banner.textContent = text;
+    banner.classList.remove('show');
+    void banner.offsetWidth; // restart animation
+    banner.classList.add('show');
+};
+
 const logToConsole = (message) => {
     const time = new Date().toLocaleTimeString();
     consoleOutput.textContent += `[${time}] ${message}\n`;
     consoleOutput.scrollTop = consoleOutput.scrollHeight;
 };
 
-// Flash de dégâts
 const flashDamage = (element) => {
     element.classList.add('damaged');
     setTimeout(() => element.classList.remove('damaged'), 300);
 };
 
-// Animation d'attaque
 const playAttackAnim = (element) => {
     element.classList.add('attacking');
     setTimeout(() => element.classList.remove('attacking'), 400);
 };
 
-// Knockback (recul temporaire)
 const knockback = (personnage, element, direction) => {
     const original = personnage.positionx;
     const dist = direction === 'droite' ? 20 : -20;
@@ -79,38 +93,33 @@ const knockback = (personnage, element, direction) => {
 };
 
 // ----- Projectiles DOM -----
-// Crée un élément projectile et le place à la position de départ
 const spawnProjectileElement = (projectile) => {
     const el = document.createElement('div');
     el.className = 'projectile';
     el.style.left = projectile.positionx + 'px';
-    // Hauteur ~ centre du stickman
     el.style.bottom = '60px';
     if (projectile.direction === 'gauche') el.classList.add('reverse');
     projectilesContainer.appendChild(el);
     projectile.element = el;
 };
-
 const updateProjectileElement = (projectile) => {
-    if (projectile.element) {
-        projectile.element.style.left = projectile.positionx + 'px';
-    }
+    if (projectile.element) projectile.element.style.left = projectile.positionx + 'px';
 };
-
 const removeProjectileElement = (projectile) => {
     if (projectile.element && projectile.element.parentNode) {
         projectile.element.parentNode.removeChild(projectile.element);
     }
 };
 
-// Bornes horizontales de l'arène
 const getArenaBounds = () => {
     const w = arenaEl.clientWidth;
-    return { min: 0, max: Math.max(0, w - 60) }; // 60 = largeur stickman
+    return { min: 0, max: Math.max(0, w - 60) };
 };
 
-// Écran de fin
-const showEndScreen = (winnerName, isVictory) => {
+// ===== Écran de fin enrichi =====
+// info: { winnerName, isVictory, levelName, progressText, xpGained, playerLevel, playerPts }
+// actions: { onReplay, onHome, onLevels, onSkills, onNext, nextLabel, victoryFinal }
+const showEndScreen = (info, actions = {}) => {
     let overlay = document.getElementById('end-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
@@ -119,17 +128,60 @@ const showEndScreen = (winnerName, isVictory) => {
             <div class="end-card">
                 <h1 id="end-title"></h1>
                 <p id="end-sub"></p>
-                <button id="end-btn">Rejouer</button>
+                <div id="end-stats" class="end-stats"></div>
+                <div id="end-buttons" class="end-buttons"></div>
             </div>`;
         document.body.appendChild(overlay);
-        overlay.querySelector('#end-btn').addEventListener('click', () => {
-            window.location.reload();
-        });
     }
-    overlay.querySelector('#end-title').textContent = isVictory ? '🏆 VICTOIRE' : '💀 DÉFAITE';
-    overlay.querySelector('#end-title').style.color = isVictory ? '#4CAF50' : '#F44336';
-    overlay.querySelector('#end-sub').textContent  = `${winnerName} remporte le combat`;
+
+    const isVictory = info.isVictory;
+    const titleEl = overlay.querySelector('#end-title');
+    const subEl   = overlay.querySelector('#end-sub');
+    const statsEl = overlay.querySelector('#end-stats');
+    const btnsEl  = overlay.querySelector('#end-buttons');
+
+    if (actions.victoryFinal) {
+        titleEl.textContent = '👑 CHAMPION ULTIME';
+        titleEl.style.color = '#FFD700';
+    } else {
+        titleEl.textContent = isVictory ? '🏆 VICTOIRE' : '💀 DÉFAITE';
+        titleEl.style.color = isVictory ? '#4CAF50' : '#F44336';
+    }
+    subEl.textContent = actions.victoryFinal
+        ? `Tu as terrassé toutes les légendes du monde Stickman !`
+        : `${info.winnerName} remporte le combat`;
+
+    // Stats résumé
+    const parts = [];
+    if (info.levelName)     parts.push(`<span>📜 ${info.levelName}</span>`);
+    if (info.progressText)  parts.push(`<span>⚔️ ${info.progressText}</span>`);
+    if (isVictory && info.xpGained) parts.push(`<span>✨ +${info.xpGained} XP</span>`);
+    if (info.playerLevel)   parts.push(`<span>🎖️ Niv ${info.playerLevel}</span>`);
+    if (info.playerPts != null) parts.push(`<span>🧠 ${info.playerPts} pts</span>`);
+    statsEl.innerHTML = parts.join('');
+
+    // Boutons
+    btnsEl.innerHTML = '';
+    const addBtn = (label, handler, cls = '') => {
+        const b = document.createElement('button');
+        b.textContent = label;
+        if (cls) b.className = cls;
+        b.onclick = handler;
+        btnsEl.appendChild(b);
+    };
+
+    if (actions.onNext) addBtn(actions.nextLabel || '➡️ Suivant', actions.onNext, 'primary');
+    addBtn('🔁 Rejouer ce combat', actions.onReplay || (() => window.location.reload()));
+    if (actions.onSkills) addBtn('🌳 Compétences', actions.onSkills);
+    if (actions.onLevels) addBtn('🗺️ Niveaux', actions.onLevels);
+    addBtn('🏠 Accueil', actions.onHome || (() => (window.location.href = 'index.html')));
+
     overlay.classList.add('visible');
+};
+
+const hideEndScreen = () => {
+    const overlay = document.getElementById('end-overlay');
+    if (overlay) overlay.classList.remove('visible');
 };
 
 export {
@@ -138,7 +190,8 @@ export {
     playerHPText, enemyHPText,
     projectilesContainer, arenaEl,
     updatePosition, updateHealthBar, setNames,
+    applyEnemyVisual, showBanner,
     logToConsole, flashDamage, playAttackAnim, knockback,
     spawnProjectileElement, updateProjectileElement, removeProjectileElement,
-    getArenaBounds, showEndScreen,
+    getArenaBounds, showEndScreen, hideEndScreen,
 };

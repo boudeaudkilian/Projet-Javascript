@@ -27,7 +27,7 @@ const skills = {
 
 function gainExp(amount) {
     player.exp += amount;
-    if (player.exp >= 100) {
+    while (player.exp >= 100) {
         player.exp   -= 100;
         player.level += 1;
         player.ptc   += 1;
@@ -44,21 +44,7 @@ function refreshAvailability() {
     }
 }
 
-function unlockSkill(skillName) {
-    const s = skills[skillName];
-    if (!s)            return false;
-    if (s.unlocked)    return false;
-    if (!s.available)  return false;
-    if (player.ptc < s.cost) return false;
-
-    player.ptc    -= s.cost;
-    s.unlocked     = true;
-    Effect(skillName);
-    refreshAvailability();
-    return true;
-}
-
-function Effect(skillName) {
+function applyEffect(skillName) {
     switch (true) {
         case skillName.startsWith("speed"):
             player.speed         += 2;  break;
@@ -75,4 +61,18 @@ function Effect(skillName) {
     }
 }
 
-export { skills, gainExp, unlockSkill };
+function unlockSkill(skillName) {
+    const s = skills[skillName];
+    if (!s)               return false;
+    if (s.unlocked)       return false;
+    if (!s.available)     return false;
+    if (player.ptc < s.cost) return false;
+
+    player.ptc    -= s.cost;
+    s.unlocked     = true;
+    applyEffect(skillName);
+    refreshAvailability();
+    return true;
+}
+
+export { skills, gainExp, unlockSkill, applyEffect, refreshAvailability };

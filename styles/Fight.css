@@ -535,3 +535,136 @@ body {
 }
 #end-overlay button:hover { transform: translateY(-2px); }
 #end-overlay button:active { transform: translateY(3px); box-shadow: 0 2px 0 #2E7D32; }
+/* Boutons fin de combat */
+#end-overlay .end-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    margin-top: 10px;
+}
+#end-overlay .end-buttons button {
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+#end-overlay #end-replay-btn {
+    background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+    box-shadow: 0 6px 0 #2E7D32;
+}
+#end-overlay #end-home-btn {
+    background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%);
+    box-shadow: 0 6px 0 #1565C0;
+}
+#end-overlay .end-buttons button:hover { transform: translateY(-2px); }
+#end-overlay .end-buttons button:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+
+/* ========== Bannière arène ========== */
+#arena-banner {
+    position: absolute;
+    top: 12px; left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(0,0,0,.75);
+    color: #FFD700;
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: 2px solid #FFD700;
+    font-weight: 700;
+    font-size: 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .4s, transform .4s;
+    z-index: 50;
+    text-shadow: 0 1px 2px #000;
+}
+#arena-banner.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    animation: banner-pulse 2.4s ease forwards;
+}
+@keyframes banner-pulse {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(.9); }
+    15%  { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.05); }
+    25%  { transform: translateX(-50%) translateY(0) scale(1); }
+    80%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ========== Différenciation ennemis : boss / ultra ========== */
+.character.boss .stickman { transform: scale(1.25); transform-origin: bottom center; filter: drop-shadow(0 0 6px #b388ff); }
+.character.ultra .stickman { transform: scale(1.55); transform-origin: bottom center; filter: drop-shadow(0 0 10px #FFD700); }
+.character.boss .stickman .head,
+.character.boss .stickman .body { background: var(--enemy-color, #4a148c) !important; }
+.character.ultra .stickman .head,
+.character.ultra .stickman .body { background: var(--enemy-color, #b8860b) !important; }
+.character.ultra::after {
+    content: '👑';
+    position: absolute;
+    top: -28px; left: 50%; transform: translateX(-50%);
+    font-size: 28px;
+    animation: crown-bob 1.6s ease-in-out infinite;
+}
+@keyframes crown-bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-6px); }
+}
+
+/* ========== End screen enrichi ========== */
+#end-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.78);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+#end-overlay.visible { display: flex; }
+#end-overlay .end-card {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #FFD700;
+    border-radius: 18px;
+    padding: 32px 40px;
+    text-align: center;
+    color: #fff;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    animation: end-pop .4s ease;
+}
+@keyframes end-pop {
+    from { transform: scale(.85); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+#end-overlay h1 { font-size: 2.2rem; margin: 0 0 10px; letter-spacing: 2px; }
+#end-overlay #end-sub { opacity: .85; margin-bottom: 18px; }
+#end-overlay .end-stats {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    margin-bottom: 22px;
+}
+#end-overlay .end-stats span {
+    background: rgba(255, 215, 0, .12);
+    border: 1px solid rgba(255, 215, 0, .35);
+    padding: 6px 12px; border-radius: 999px; font-size: .85rem;
+}
+#end-overlay .end-buttons {
+    display: flex; flex-direction: column; gap: 10px;
+}
+#end-overlay .end-buttons button {
+    padding: 12px 18px;
+    border: none; border-radius: 10px;
+    background: #2a2a3e; color: #fff;
+    font-size: 1rem; font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+}
+#end-overlay .end-buttons button:hover { background: #3a3a5e; transform: translateY(-1px); }
+#end-overlay .end-buttons button.primary {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1a1a2e;
+}
+#end-overlay .end-buttons button.primary:hover { filter: brightness(1.05); }
