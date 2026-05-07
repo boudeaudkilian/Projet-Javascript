@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickman RPG - Combat Arena</title>
+    <link rel="stylesheet" href="./styles/Fight.css">
+</head>
+<body>
+    <!-- HUD de combat -->
+    <div id="combat-hud">
+        <div class="player-info">
+            <h2 id="player-name">Sticky</h2>
+            <div class="health-bar-container">
+                <div id="player-health-bar" class="health-bar"></div>
+            </div>
+            <p id="player-hp-text">100 / 100 HP</p>
+        </div>
+        <div class="enemy-info">
+            <h2 id="enemy-name">Ennemi</h2>
+            <div class="health-bar-container">
+                <div id="enemy-health-bar" class="health-bar"></div>
+            </div>
+            <p id="enemy-hp-text">100 / 100 HP</p>
+        </div>
+    </div>
+
+    <!-- Arène -->
+    <div id="arena">
+        <div id="player-character" class="character">
+            <div class="stickman">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="arm-left"></div>
+                <div class="arm-right"></div>
+                <div class="leg-left"></div>
+                <div class="leg-right"></div>
+            </div>
+        </div>
+        <div id="enemy-character" class="character enemy">
+            <div class="stickman">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="arm-left"></div>
+                <div class="arm-right"></div>
+                <div class="leg-left"></div>
+                <div class="leg-right"></div>
+            </div>
+        </div>
+        <div id="projectiles-container"></div>
+    </div>
+
+    <!-- Console de debug -->
+    <div id="debug-console">
+        <h4>Console :</h4>
+        <div id="console-output"></div>
+    </div>
+
+    <script type="module" src="./scripts/main.js"></script>
+</body>
+</html>

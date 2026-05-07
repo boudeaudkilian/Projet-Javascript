@@ -3,77 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stickman RPG - Combat Arena</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <title>Stickman RPG Combat</title>
+    <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
-    <!-- Zone d'informations de combat -->
-    <div id="combat-hud">
-        <!-- Infos Joueur -->
-        <div class="player-info">
-            <h2 id="player-name">Sticky</h2>
-            <div class="health-bar-container">
-                <div id="player-health-bar" class="health-bar"></div>
+    <!-- Écran d'accueil -->
+    <div id="homeScreen" class="screen active">
+        <div class="home-container">
+            <div class="game-title">
+                <h1>STICKMAN</h1>
+                <h2>RPG COMBAT</h2>
+                <div class="title-decoration"></div>
             </div>
-            <p id="player-hp-text">100 / 100 HP</p>
-        </div>
-        
-        <!-- Infos Ennemi -->
-        <div class="enemy-info">
-            <h2 id="enemy-name">Ennemi</h2>
-            <div class="health-bar-container">
-                <div id="enemy-health-bar" class="health-bar"></div>
+
+            <div class="stickman-hero">
+                <div class="stickman">
+                    <div class="head"></div>
+                    <div class="body"></div>
+                    <div class="arms">
+                        <div class="arm left"></div>
+                        <div class="arm right"></div>
+                    </div>
+                    <div class="legs">
+                        <div class="leg left"></div>
+                        <div class="leg right"></div>
+                    </div>
+                </div>
             </div>
-            <p id="enemy-hp-text">100 / 100 HP</p>
-        </div>
-    </div>
-    
-    <!-- Arène de combat -->
-    <div id="arena">
-        <!-- Personnage Joueur -->
-        <div id="player-character" class="character">
-            <div class="stickman">
-                <div class="head"></div>
-                <div class="body"></div>
-                <div class="arm-left"></div>
-                <div class="arm-right"></div>
-                <div class="leg-left"></div>
-                <div class="leg-right"></div>
+
+            <div class="menu-buttons">
+                <button id="startBtn" class="btn btn-primary"><span>COMMENCER</span></button>
+                <button id="instructionsBtn" class="btn btn-secondary"><span>CONTRÔLES</span></button>
             </div>
-        </div>
-        
-        <!-- Personnage Ennemi -->
-        <div id="enemy-character" class="character enemy">
-            <div class="stickman">
-                <div class="head"></div>
-                <div class="body"></div>
-                <div class="arm-left"></div>
-                <div class="arm-right"></div>
-                <div class="leg-left"></div>
-                <div class="leg-right"></div>
+
+            <div class="footer-text">
+                <p>Affrontez des ennemis, des tanks • Débloquez des compétences • Devenez légendaire</p>
             </div>
         </div>
-        
-        <!-- Projectiles apparaîtront ici -->
-        <div id="projectiles-container"></div>
     </div>
-    
-    <!-- Contrôles 
-    <div id="controls">
-        <h3>Contrôles (temporaires pour test) :</h3>
-        <button onclick="testDeplacer('gauche')">← Gauche</button>
-        <button onclick="testDeplacer('droite')">→ Droite</button>
-        <button onclick="testAttaquer()">⚔️ Attaque</button>
-        <button onclick="testAttaqueDistance()">🏹 Tir</button>
-        <button onclick="testDefense()">🛡️ Défense</button>
+
+    <!-- Menu principal -->
+    <div id="mainMenu" class="screen">
+        <div class="menu-container">
+            <h1>MENU PRINCIPAL</h1>
+            <div class="menu-options">
+                <button id="resumeBtn" class="btn btn-primary">Reprendre</button>
+                <button id="campaignBtn" class="btn btn-primary">Campagne (5 niveaux)</button>
+                <button id="newGameBtn" class="btn btn-secondary">Nouvelle Partie</button>
+                <button id="skillsBtn" class="btn btn-secondary">Compétences</button>
+                <button id="backToHomeBtn" class="btn btn-secondary">Accueil</button>
+            </div>
+        </div>
     </div>
-    -->
-    <!-- Console de debug -->
-    <div id="debug-console">
-        <h4>Console :</h4>
-        <div id="console-output"></div>
+
+    <!-- Sélection de niveau -->
+    <div id="levelsScreen" class="screen">
+        <div class="menu-container levels-container">
+            <h1>CHOISIS UN NIVEAU</h1>
+            <div id="levels-grid" class="levels-grid"></div>
+            <button id="backFromLevelsBtn" class="btn btn-secondary">Retour</button>
+        </div>
     </div>
-    
-    <script type="module" src="scripts/main.js"></script>
+
+    <!-- Écran d'instructions -->
+    <div id="instructionsScreen" class="screen">
+        <div class="instructions-container">
+            <h1>CONTRÔLES</h1>
+            <div class="instructions-content">
+                <div class="instruction-item">
+                    <h3>Déplacement</h3>
+                    <p>Flèches ← → ou Q / D</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>Attaque rapprochée</h3>
+                    <p>A ou Espace</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>Projectile</h3>
+                    <p>Touche E</p>
+                </div>
+                <div class="instruction-item">
+                    <h3>Défense</h3>
+                    <p>Maintenir S (réduit les dégâts de 50%)</p>
+                </div>
+            </div>
+            <button id="backFromInstructionsBtn" class="btn btn-secondary">Retour</button>
+        </div>
+    </div>
+
+    <script type="module" src="./scripts/menu.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-
+// ===== LOGIQUE DE COMBAT =====
 import {
     playerElement, enemyElement,
     playerHealthBar, enemyHealthBar,
@@ -8,18 +8,16 @@ import {
     spawnProjectileElement, updateProjectileElement, removeProjectileElement,
     getArenaBounds, showEndScreen,
 } from './visuel.js';
-import { player } from './character.js';
+import { player } from './Character.js';
 
-// État global du combat
 const combatState = {
     over: false,
     projectiles: [],
-    enemy: null, // sera défini par main.js via setEnemy()
+    enemy: null,
 };
 
 const setEnemy = (enemy) => { combatState.enemy = enemy; };
 
-// Helpers d'accès aux éléments visuels selon le personnage
 const getVisualFor = (personnage) => {
     if (personnage === player) {
         return { element: playerElement, healthBar: playerHealthBar, hpText: playerHPText };
@@ -27,26 +25,21 @@ const getVisualFor = (personnage) => {
     return { element: enemyElement, healthBar: enemyHealthBar, hpText: enemyHPText };
 };
 
-// Vérifie si une attaque corps à corps peut toucher (orientation prise en compte)
 const peutToucher = (attaquant, cible) => {
     const dx = cible.positionx - attaquant.positionx;
     const distance = Math.abs(dx);
     if (distance > attaquant.attackRangeC) return false;
-    // L'attaquant doit faire face à la cible
     if (attaquant.facingR && dx < 0) return false;
     if (!attaquant.facingR && dx > 0) return false;
     return true;
 };
 
-// Applique les dégâts (gère défense + KO + fin de combat)
 const recevoirDegats = (cible, degats) => {
     if (combatState.over || !cible.isAlive) return;
-
     if (cible.isDefending) {
         degats = Math.round(degats * 0.5);
         logToConsole(`${cible.name} bloque une partie des dégâts ! 🛡️`);
     }
-
     cible.currentHealth -= degats;
     logToConsole(`${cible.name} perd ${degats} PV`);
 
@@ -62,28 +55,22 @@ const recevoirDegats = (cible, degats) => {
     }
 };
 
-// Termine le combat et émet un événement écoutable par le reste du jeu
 const endCombat = (loser) => {
     if (combatState.over) return;
     combatState.over = true;
     const winner = loser === player ? combatState.enemy : player;
     logToConsole(`${loser.name} est K.O. ! 🏁`);
     logToConsole(`${winner.name} remporte le combat !`);
-    showEndScreen(winner.name, winner === player);
-    // Event personnalisé : la partie XP/progression peut s'y abonner
     window.dispatchEvent(new CustomEvent('combatEnd', {
         detail: { winner, loser, isPlayerWin: winner === player }
     }));
 };
 
-// Met à jour l'orientation (facingR) en fonction de la cible
 const faceTarget = (perso, cible) => {
     perso.facingR = cible.positionx >= perso.positionx;
 };
 
 // ---------- ATTAQUES ----------
-
-// Attaque corps à corps (avec cooldown)
 const attaquer = (attaquant, cible) => {
     if (combatState.over || !attaquant.isAlive || !cible.isAlive) return;
     if (attaquant.isOnCooldownMelee()) {
@@ -95,7 +82,6 @@ const attaquer = (attaquant, cible) => {
 
     const { element: attackerEl } = getVisualFor(attaquant);
     playAttackAnim(attackerEl);
-
     logToConsole(`${attaquant.name} attaque ${cible.name} !`);
 
     if (peutToucher(attaquant, cible)) {
@@ -109,7 +95,6 @@ const attaquer = (attaquant, cible) => {
     }
 };
 
-// Déplacement (borné par l'arène)
 const deplacer = (personnage, direction) => {
     if (combatState.over || !personnage.isAlive) return;
     const { min, max } = getArenaBounds();
@@ -121,13 +106,11 @@ const deplacer = (personnage, direction) => {
         personnage.positionx = Math.max(min, personnage.positionx - personnage.speed);
         personnage.facingR = false;
     }
-
     const { element } = getVisualFor(personnage);
     updatePosition(personnage, element);
 };
 
 // ---------- PROJECTILES ----------
-
 const tirerProjectile = (attaquant, cible) => {
     faceTarget(attaquant, cible);
     const projectile = {
@@ -151,7 +134,6 @@ const tirerProjectile = (attaquant, cible) => {
 const projectileTouche = (projectile, cible) =>
     Math.abs(cible.positionx + 30 - projectile.positionx) <= projectile.taille;
 
-// Attaque à distance (avec cooldown + portée max)
 const attaquerDistance = (attaquant, cible) => {
     if (combatState.over || !attaquant.isAlive || !cible.isAlive) return;
     if (!attaquant.canShoot || attaquant.attackRangeD <= 0) {
@@ -166,7 +148,6 @@ const attaquerDistance = (attaquant, cible) => {
     tirerProjectile(attaquant, cible);
 };
 
-// Mise à jour des projectiles à chaque frame (appelée par la game loop)
 const updateProjectiles = () => {
     const { min, max } = getArenaBounds();
     for (let i = combatState.projectiles.length - 1; i >= 0; i--) {
@@ -176,7 +157,6 @@ const updateProjectiles = () => {
         p.positionx += p.direction === "droite" ? p.vitesse : -p.vitesse;
         updateProjectileElement(p);
 
-        // Distance parcourue dépassée OU sortie d'arène
         if (p.positionx < min - 50 || p.positionx > max + 50) {
             p.alive = false;
             removeProjectileElement(p);
@@ -185,7 +165,6 @@ const updateProjectiles = () => {
             continue;
         }
 
-        // Collision avec la cible
         const cibles = [player, combatState.enemy].filter(c => c && c !== p.tireur && c.isAlive);
         for (const c of cibles) {
             if (projectileTouche(p, c)) {
@@ -200,6 +179,11 @@ const updateProjectiles = () => {
     }
 };
 
+const clearProjectiles = () => {
+    for (const p of combatState.projectiles) removeProjectileElement(p);
+    combatState.projectiles = [];
+};
+
 // ---------- DÉFENSE ----------
 const activerDefense = (personnage) => {
     if (combatState.over) return;
@@ -211,11 +195,16 @@ const desactiverDefense = (personnage) => {
     logToConsole(`${personnage.name} arrête de se défendre.`);
 };
 
+const resetCombat = () => {
+    combatState.over = false;
+    clearProjectiles();
+};
+
 export {
     combatState, setEnemy,
     peutToucher, recevoirDegats,
     attaquer, deplacer,
-    tirerProjectile, attaquerDistance, updateProjectiles,
+    tirerProjectile, attaquerDistance, updateProjectiles, clearProjectiles,
     activerDefense, desactiverDefense,
-    endCombat,
+    endCombat, resetCombat,
 };
