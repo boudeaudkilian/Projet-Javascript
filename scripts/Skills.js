@@ -1,4 +1,4 @@
-import { player } from "scripts/Character.js";
+import { player } from "./Character.js";
 
 class Skill {
     constructor(name, description, cost, unlockedBy) {

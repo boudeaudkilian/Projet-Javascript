@@ -1,5 +1,5 @@
 
-import { player } from './character.js';
+import { player } from './Character.js';
 import { attaquer, attaquerDistance, deplacer, combatState } from './combat.js';
 
 const updateEnemyAI = () => {

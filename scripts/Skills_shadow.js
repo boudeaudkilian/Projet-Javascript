@@ -1,5 +1,5 @@
-import { player } from "scripts/Character.js";
-import { skills, unlockSkill } from "scripts/Skills.js";
+import { player } from "./Character.js";
+import { skills, unlockSkill } from "./Skills.js";
 
 function showMsg(text) {
     const el = document.getElementById("msg");

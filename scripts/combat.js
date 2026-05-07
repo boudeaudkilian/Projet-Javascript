@@ -8,7 +8,7 @@ import {
     spawnProjectileElement, updateProjectileElement, removeProjectileElement,
     getArenaBounds, showEndScreen,
 } from './visuel.js';
-import { player } from './character.js';
+import { player } from './Character.js';
 
 // État global du combat
 const combatState = {
