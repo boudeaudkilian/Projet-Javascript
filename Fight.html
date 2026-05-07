@@ -7,9 +7,8 @@
     <link rel="stylesheet" href="./styles/Fight.css">
 </head>
 <body>
-    <!-- Zone d'informations de combat -->
+    <!-- HUD de combat -->
     <div id="combat-hud">
-        <!-- Infos Joueur -->
         <div class="player-info">
             <h2 id="player-name">Sticky</h2>
             <div class="health-bar-container">
@@ -17,8 +16,6 @@
             </div>
             <p id="player-hp-text">100 / 100 HP</p>
         </div>
-        
-        <!-- Infos Ennemi -->
         <div class="enemy-info">
             <h2 id="enemy-name">Ennemi</h2>
             <div class="health-bar-container">
@@ -27,10 +24,9 @@
             <p id="enemy-hp-text">100 / 100 HP</p>
         </div>
     </div>
-    
-    <!-- Arène de combat -->
+
+    <!-- Arène -->
     <div id="arena">
-        <!-- Personnage Joueur -->
         <div id="player-character" class="character">
             <div class="stickman">
                 <div class="head"></div>
@@ -41,8 +37,6 @@
                 <div class="leg-right"></div>
             </div>
         </div>
-        
-        <!-- Personnage Ennemi -->
         <div id="enemy-character" class="character enemy">
             <div class="stickman">
                 <div class="head"></div>
@@ -53,27 +47,15 @@
                 <div class="leg-right"></div>
             </div>
         </div>
-        
-        <!-- Projectiles apparaîtront ici -->
         <div id="projectiles-container"></div>
     </div>
-    
-    <!-- Contrôles 
-    <div id="controls">
-        <h3>Contrôles (temporaires pour test) :</h3>
-        <button onclick="testDeplacer('gauche')">← Gauche</button>
-        <button onclick="testDeplacer('droite')">→ Droite</button>
-        <button onclick="testAttaquer()">⚔️ Attaque</button>
-        <button onclick="testAttaqueDistance()">🏹 Tir</button>
-        <button onclick="testDefense()">🛡️ Défense</button>
-    </div>
--->
+
     <!-- Console de debug -->
     <div id="debug-console">
         <h4>Console :</h4>
         <div id="console-output"></div>
     </div>
-    
-    <script type="module" src="./scripts/Accueil_combat.js"></script>
+
+    <script type="module" src="./scripts/arene.js"></script>
 </body>
 </html>
