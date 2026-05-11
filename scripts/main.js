@@ -56,14 +56,27 @@ document.getElementById('campaignBtn').addEventListener('click', () => {
     showScreen('levels');
 });
 
-document.getElementById('newGameBtn').addEventListener('click', () => {
-    if (!confirm('Nouvelle partie ? Toute la progression sera effacée.')) return;
-    localStorage.removeItem('playerProgress');
-    localStorage.removeItem('selectedEnemy');
-    localStorage.removeItem('campaignProgress');
+function fullReset() {
+    const keysToClear = [
+        'playerProgress',
+        'campaignProgress',
+        'maxUnlockedLevel',
+        'selectedEnemy',
+        'selectedLevel',
+        'gameMode',
+    ];
+    keysToClear.forEach(k => localStorage.removeItem(k));
+    // Valeurs de départ
     localStorage.setItem('maxUnlockedLevel', '1');
-    localStorage.setItem('selectedLevel', '1');
-    localStorage.setItem('gameMode', 'campaign');
+    localStorage.setItem('selectedLevel',    '1');
+    localStorage.setItem('gameMode',         'campaign');
+}
+
+
+
+document.getElementById('newGameBtn').addEventListener('click', () => {
+    if (!confirm('Nouvelle partie ?\nXP, niveau, points et compétences seront remis à zéro.')) return;
+    fullReset();
     window.location.href = './Fight.html';
 });
 

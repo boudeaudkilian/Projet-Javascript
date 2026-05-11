@@ -133,5 +133,40 @@ window.resetTree = function() {
     showMsg("Arbre réinitialisé.");
 };
 
-loadGame();
+
+window.fullResetGame = function() {
+    if (!confirm("Nouvelle partie ?\nXP, niveau, points et compétences seront remis à zéro.")) return;
+
+    // 1) Nettoyage du stockage
+    [
+        'playerProgress',
+        'campaignProgress',
+        'maxUnlockedLevel',
+        'selectedEnemy',
+        'selectedLevel',
+        'gameMode',
+    ].forEach(k => localStorage.removeItem(k));
+
+    // 2) Reset en mémoire (au cas où on resterait sur la page)
+    player.level         = 1;
+    player.exp           = 0;
+    player.ptc           = 1;
+    player.maxHealth     = 100;
+    player.currentHealth = 100;
+    player.strength      = 10;
+    player.speed         = 6;
+    player.canShoot      = false;
+
+    // 3) Verrouille tout l'arbre
+    for (const key in skills) {
+        skills[key].unlocked  = false;
+        skills[key].available = skills[key].unlockedBy === null;
+    }
+
+    // 4) UI + retour accueil
+    refreshUI();
+    showMsg("Partie réinitialisée — XP et niveau remis à zéro.");
+    setTimeout(() => { window.location.href = './index.html'; }, 800);
+};
+
 refreshUI();
