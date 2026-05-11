@@ -43,7 +43,7 @@ const skills = {
 // Renvoie l'XP totale requise pour PASSER d'un niveau à l'autre.
 // Ex. xpForNextLevel(1) = 100  → il faut 100 XP pour passer de niv 1 à niv 2.
 function xpForNextLevel(level) {
-    return level * 100;
+    return 100;
 }
 
 // --------- GAIN D'XP & LEVEL UP ---------

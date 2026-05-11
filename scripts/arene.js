@@ -191,9 +191,7 @@ const persistPlayer = () => {
 };
 
 const xpFor = (enemy) => {
-    let xp = 25 + Math.floor(enemy.maxHealth / 4);
-    if (enemy.kind === 'boss')  xp = Math.floor(xp * 1.5);
-    if (enemy.kind === 'ultra') xp *= 3;
+    let xp = 100;
     return xp;
 };
 
@@ -217,6 +215,12 @@ window.addEventListener('combatEnd', (e) => {
         showXPGain(xp);              // visuel : "+XP" qui flotte
         updateXPBar(player);         // visuel : remplit la barre d'XP du HUD
         logToConsole(`+${xp} XP ! Niveau ${player.level} (pts: ${player.ptc})`);
+    } else {
+        const xp = xpFor(enemy) / 10;
+        gainExp(xp);                 // logique : ajoute l'XP même en perdant, pour encourager le joueur
+        showXPGain(xp);              // visuel : "+XP" qui flotte
+        updateXPBar(player);         // visuel : remplit la barre d'XP du HUD
+        logToConsole(`Défaite... ${player.name} a été vaincu par ${enemy.name}.`);
     }
     persistPlayer();
 
