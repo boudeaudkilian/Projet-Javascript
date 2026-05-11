@@ -38,6 +38,10 @@ function refreshAvailability() {
     for (const key in skills) {
         const s = skills[key];
         if (s.unlocked || s.available) continue;
+        if (s.unlockedBy === null) {
+            s.available = true;
+            continue;
+        }
         if (Array.isArray(s.unlockedBy)) {
             s.available = s.unlockedBy.some(dep => skills[dep]?.unlocked);
         }
@@ -46,18 +50,18 @@ function refreshAvailability() {
 
 function applyEffect(skillName) {
     switch (true) {
+        case skillName === "epee":
+            player.strength  += 10; break;
+        case skillName === "arc":
+            player.canShoot   = true;
+            player.strength  += 5;  break;
         case skillName.startsWith("speed"):
-            player.speed         += 2;  break;
+            player.speed     += 2;  break;
         case skillName.startsWith("strength"):
-            player.strength      += 5;  break;
+            player.strength  += 5;  break;
         case skillName.startsWith("life"):
             player.maxHealth     += 50;
             player.currentHealth += 50; break;
-        case skillName === "epee":
-            player.strength      += 10; break;
-        case skillName === "arc":
-            player.canShoot       = true;
-            player.strength      += 5;  break;
     }
 }
 

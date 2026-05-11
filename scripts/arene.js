@@ -18,16 +18,16 @@ import {
 import { gainExp } from './Skills.js';
 
 try {
-    const saved = JSON.parse(localStorage.getItem('playerProgress') || 'null');
-    if (saved) {
-        player.exp           = saved.exp           ?? 0;
-        player.level         = saved.level         ?? 1;
-        player.ptc           = saved.ptc           ?? 1;
-        player.maxHealth     = saved.maxHealth     ?? player.maxHealth;
+    const saved = JSON.parse(localStorage.getItem('stickmanSave') || 'null');
+    if (saved && saved.player) {
+        player.exp           = saved.player.exp           ?? 0;
+        player.level         = saved.player.level         ?? 1;
+        player.ptc           = saved.player.ptc           ?? 1;
+        player.maxHealth     = saved.player.maxHealth     ?? player.maxHealth;
         player.currentHealth = player.maxHealth;
-        player.strength      = saved.strength      ?? player.strength;
-        player.speed         = saved.speed         ?? player.speed;
-        player.canShoot      = saved.canShoot      ?? player.canShoot;
+        player.strength      = saved.player.strength      ?? player.strength;
+        player.speed         = saved.player.speed         ?? player.speed;
+        player.canShoot      = saved.player.canShoot      ?? player.canShoot;
     }
 } catch (e) {}
 
@@ -35,11 +35,11 @@ const MODE_CAMPAIGN = 'campaign';
 const MODE_FREE     = 'free';
 
 const session = {
-    mode:          localStorage.getItem('gameMode') || MODE_CAMPAIGN,
-    levelId:       parseInt(localStorage.getItem('selectedLevel') || '1', 10),
-    fightIndex:    0,
-    sequence:      [],
-    currentEnemy:  null,
+    mode:         localStorage.getItem('gameMode') || MODE_CAMPAIGN,
+    levelId:      parseInt(localStorage.getItem('selectedLevel') || '1', 10),
+    fightIndex:   0,
+    sequence:     [],
+    currentEnemy: null,
 };
 
 const buildSequence = () => {
@@ -76,8 +76,8 @@ const setupCombat = (enemy) => {
     if (session.mode === MODE_CAMPAIGN) {
         const lvl = getLevel(session.levelId);
         banner = `${lvl.name} — Combat ${session.fightIndex + 1}/${session.sequence.length}`;
-        if (enemy.kind === 'ultra')      banner = `⚠️ ULTRA BOSS ⚠️ ${enemy.name}`;
-        else if (enemy.kind === 'boss')  banner = `★ BOSS ★ ${enemy.name}`;
+        if (enemy.kind === 'ultra')     banner = `⚠️ ULTRA BOSS ⚠️ ${enemy.name}`;
+        else if (enemy.kind === 'boss') banner = `★ BOSS ★ ${enemy.name}`;
     } else {
         banner = `Combat libre : ${enemy.name}`;
     }
@@ -109,10 +109,10 @@ if (session.mode === MODE_CAMPAIGN) {
     setupCombat(pickEnemyFree());
 }
 
-window.testDeplacer       = (dir) => deplacer(player, dir);
-window.testAttaquer       = ()    => attaquer(player, session.currentEnemy);
-window.testAttaqueDistance= ()    => attaquerDistance(player, session.currentEnemy);
-window.testDefense        = ()    => {
+window.testDeplacer        = (dir) => deplacer(player, dir);
+window.testAttaquer        = ()    => attaquer(player, session.currentEnemy);
+window.testAttaqueDistance = ()    => attaquerDistance(player, session.currentEnemy);
+window.testDefense         = ()    => {
     if (player.isDefending) desactiverDefense(player);
     else activerDefense(player);
 };
@@ -140,7 +140,7 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-let lastAITick  = 0;
+let lastAITick   = 0;
 const AI_TICK_MS = 100;
 
 const gameLoop = (now) => {
@@ -160,15 +160,18 @@ requestAnimationFrame(gameLoop);
 
 const persistPlayer = () => {
     try {
-        localStorage.setItem('playerProgress', JSON.stringify({
-            exp:      player.exp,
-            level:    player.level,
-            ptc:      player.ptc,
-            maxHealth:player.maxHealth,
-            strength: player.strength,
-            speed:    player.speed,
-            canShoot: player.canShoot,
-        }));
+        const existing = JSON.parse(localStorage.getItem('stickmanSave') || '{}');
+        existing.player = {
+            exp:           player.exp,
+            level:         player.level,
+            ptc:           player.ptc,
+            maxHealth:     player.maxHealth,
+            currentHealth: player.currentHealth,
+            strength:      player.strength,
+            speed:         player.speed,
+            canShoot:      player.canShoot,
+        };
+        localStorage.setItem('stickmanSave', JSON.stringify(existing));
         if (session.mode === MODE_CAMPAIGN) {
             localStorage.setItem('campaignProgress', JSON.stringify({
                 levelId:    session.levelId,
@@ -206,9 +209,9 @@ window.addEventListener('combatEnd', (e) => {
     }
     persistPlayer();
 
-    const actions  = {};
-    const lvl      = getLevel(session.levelId);
-    const isLast   = session.fightIndex >= session.sequence.length - 1;
+    const actions = {};
+    const lvl     = getLevel(session.levelId);
+    const isLast  = session.fightIndex >= session.sequence.length - 1;
 
     if (session.mode === MODE_CAMPAIGN && isPlayerWin) {
         if (!isLast) {
