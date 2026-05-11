@@ -8,7 +8,18 @@
 <body>
     <div class="skill-tree">
         <h2>Arbre de compétences</h2>
-        <div class="pts">Points disponibles : <span id="pts-display">1</span></div>
+
+        <!-- ===== Bandeau RPG : Niveau + barre d'XP + points ===== -->
+        <div class="rpg-status">
+            <div class="rpg-status-line">
+                <span class="rpg-status-level">Niveau <b id="status-level">1</b></span>
+                <span class="rpg-status-pts">🧠 <b id="pts-display">1</b> pts</span>
+            </div>
+            <div class="rpg-status-xp">
+                <div id="status-xp-bar" class="rpg-status-xp-bar"></div>
+                <div id="status-xp-text" class="rpg-status-xp-text">0 / 100 XP</div>
+            </div>
+        </div>
 
         <div class="row">
             <div class="node">
@@ -16,7 +27,7 @@
                     <div class="card-icon">⚔️</div>
                     <div class="card-name">Épée</div>
                     <div class="card-desc">+10 force au corps à corps</div>
-                    <div class="card-cost" id="cost-epee">Coût : 1 pt</div>
+                    <div class="card-cost cost-epee" id="cost-epee">Coût : 1 pt</div>
                 </div>
             </div>
             <div class="node">
@@ -24,7 +35,7 @@
                     <div class="card-icon">🏹</div>
                     <div class="card-name">Arc</div>
                     <div class="card-desc">Attaque à distance +5 force</div>
-                    <div class="card-cost" id="cost-arc">Coût : 1 pt</div>
+                    <div class="card-cost cost-arc" id="cost-arc">Coût : 1 pt</div>
                 </div>
             </div>
         </div>
@@ -133,7 +144,7 @@
                 </div>
             </div>
         </div>
-        <<div class="msg" id="msg"></div>
+        <div class="msg" id="msg"></div>
             <div style="text-align:center; display:flex; gap:1rem; justify-content:center; margin-top:1rem;">
                 <button class="reset-btn" onclick="resetTree()">Réinitialiser</button>
                 <button class="reset-btn" onclick="window.location.href='./index.html'">Retour</button>

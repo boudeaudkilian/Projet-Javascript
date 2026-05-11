@@ -7,7 +7,18 @@
     <link rel="stylesheet" href="./styles/Fight.css">
 </head>
 <body>
-    <!-- HUD de combat -->
+    <!-- ===== HUD du joueur (NIVEAU + XP) ===== -->
+    <!-- Toujours visible pendant le combat → feedback RPG immédiat -->
+    <div id="rpg-hud">
+        <div class="rpg-level">Niveau <span id="rpg-level-num">1</span></div>
+        <div class="rpg-xp-container" title="Expérience">
+            <div id="rpg-xp-bar" class="rpg-xp-bar"></div>
+            <div id="rpg-xp-text" class="rpg-xp-text">0 / 100 XP</div>
+        </div>
+        <div class="rpg-points">🧠 <span id="rpg-points-num">1</span> pts</div>
+    </div>
+
+    <!-- HUD de combat (PV) -->
     <div id="combat-hud">
         <div class="player-info">
             <h2 id="player-name">Sticky</h2>
