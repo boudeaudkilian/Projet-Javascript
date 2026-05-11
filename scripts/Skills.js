@@ -62,9 +62,9 @@ function gainExp(amount) {
         player.exp   -= xpForNextLevel(player.level);
         player.level += 1;
         player.ptc   += 1;
-        // Petit bonus de level up : on rend un peu de PV au joueur
-        player.maxHealth     += 5;
-        player.currentHealth  = player.maxHealth;
+        // PAS de bonus automatique de stats !
+        // La montée de niveau ne fait que donner 1 point de compétence.
+        // C'est au joueur de cliquer dans l'arbre pour augmenter ses stats.
         leveledUp     = true;
         levelsGained += 1;
     }

@@ -216,7 +216,7 @@ const showLevelUpToast = (newLevel) => {
     const el = document.createElement('div');
     el.className = 'level-up-toast';
     el.innerHTML = `<div class="lu-title">⭐ LEVEL UP ⭐</div>
-                    <div class="lu-sub">Niveau ${newLevel} — +1 point de compétence</div>`;
+                    <div class="lu-sub">Niveau ${newLevel} — +1 point — clique dans l&#39;arbre pour t&#39;améliorer !</div>`;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2200);
 };
