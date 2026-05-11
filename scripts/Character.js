@@ -30,11 +30,19 @@ class Character {
     isOnCooldownRanged() {
         return performance.now() - this.lastRangedAt < this.attackCooldownD;
     }
+
+    reset() {
+    this.currentHealth = this.maxHealth;
+    this.isAlive       = true;
+    this.isDefending   = false;
+    this.lastMeleeAt   = 0;
+    this.lastRangedAt  = 0;
+    }
 }
 
 class Player extends Character {
     constructor() {
-        super("Sticky", 100, 10, 6, 0, 0, true, 70, 800, 400, 700, true);
+        super("Sticky", 100, 10, 6, 0, 0, true, 70, 800, 400, 700, false);
     }
 }
 
@@ -59,4 +67,21 @@ const enemy3  = new Enemy("Colosse Stable",   200, 14,  2,  80,   0, 1100,    0,
 const boss1   = new Boss ("Titan Imperçable", 400, 22,  2,  90, 700, 1000, 1800,  true);
 const boss2   = new Boss ("Maître des Ombres",300, 28,  5,  80, 700,  700, 1400,  true);
 
-export { Character, Player, Enemy, Boss, player, enemy1, enemy2, enemy3, boss1, boss2 };
+const allEnemies = [enemy1, enemy2, enemy3, boss1, boss2];
+
+const LEVELS = [
+    { id: 1, name: "Les Ruines",        description: "Découverte du combat",    enemies: [enemy1, enemy2], boss: boss1 },
+    { id: 2, name: "La Forêt Maudite",  description: "Découverte des attaques à distance",    enemies: [enemy2, enemy3], boss: boss2 },
+    { id: 3, name: "Les Cavernes",      description: "PV et dégâts en hausse",  enemies: [enemy1, enemy3], boss: boss1 },
+    { id: 4, name: "Le Château",        description: "Boss agressifs",          enemies: [enemy2, enemy3], boss: boss2 },
+    { id: 5, name: "L'Abîme Final",     description: "Seuls les plus forts...", enemies: [boss1, boss2],   boss: boss2 },
+];
+
+const getLevel = (id) => LEVELS.find(l => l.id === id) || LEVELS[0];
+
+const getLevelSequence = (id) => {
+    const lvl = getLevel(id);
+    return [...lvl.enemies, lvl.boss];
+};
+
+export { Character, Player, Enemy, Boss, player, allEnemies, enemy1, enemy2, enemy3, boss1, boss2, LEVELS, getLevel, getLevelSequence };
