@@ -1,4 +1,3 @@
-// ===== POINT D'ENTRÉE DU COMBAT =====
 import { player, allEnemies, getLevel, getLevelSequence, LEVELS } from './Character.js';
 import {
     attaquer, deplacer, attaquerDistance,
@@ -18,42 +17,40 @@ import {
 } from './visuel.js';
 import { gainExp } from './Skills.js';
 
-// ---------- Restaure progression sauvegardée AVANT setup ----------
 try {
     const saved = JSON.parse(localStorage.getItem('playerProgress') || 'null');
     if (saved) {
-        player.exp = saved.exp ?? 0;
-        player.level = saved.level ?? 1;
-        player.ptc = saved.ptc ?? 1;
-        player.maxHealth = saved.maxHealth ?? player.maxHealth;
+        player.exp           = saved.exp           ?? 0;
+        player.level         = saved.level         ?? 1;
+        player.ptc           = saved.ptc           ?? 1;
+        player.maxHealth     = saved.maxHealth     ?? player.maxHealth;
         player.currentHealth = player.maxHealth;
-        player.strength = saved.strength ?? player.strength;
-        player.speed = saved.speed ?? player.speed;
-        player.canShoot = saved.canShoot ?? player.canShoot;
+        player.strength      = saved.strength      ?? player.strength;
+        player.speed         = saved.speed         ?? player.speed;
+        player.canShoot      = saved.canShoot      ?? player.canShoot;
     }
-} catch (e) { /* ignore */ }
+} catch (e) {}
 
-// ---------- Mode campagne (niveau choisi) ----------
 const MODE_CAMPAIGN = 'campaign';
-const MODE_FREE = 'free';
+const MODE_FREE     = 'free';
 
 const session = {
-    mode: localStorage.getItem('gameMode') || MODE_CAMPAIGN,
-    levelId: parseInt(localStorage.getItem('selectedLevel') || '1', 10),
-    fightIndex: 0,        // index dans la séquence du niveau
-    sequence: [],
-    currentEnemy: null,
+    mode:          localStorage.getItem('gameMode') || MODE_CAMPAIGN,
+    levelId:       parseInt(localStorage.getItem('selectedLevel') || '1', 10),
+    fightIndex:    0,
+    sequence:      [],
+    currentEnemy:  null,
 };
 
 const buildSequence = () => {
-    if (session.mode === MODE_CAMPAIGN) {
-        session.sequence = getLevelSequence(session.levelId);
-    } else {
-        session.sequence = allEnemies;
-    }
+    session.sequence = session.mode === MODE_CAMPAIGN
+        ? getLevelSequence(session.levelId)
+        : allEnemies;
 };
 
 const setupCombat = (enemy) => {
+    resetCombat();
+
     session.currentEnemy = enemy;
 
     player.reset();
@@ -62,9 +59,9 @@ const setupCombat = (enemy) => {
 
     const { max } = getArenaBounds();
     player.positionx = 100;
-    enemy.positionx = Math.max(300, max - 150);
-    player.facingR = true;
-    enemy.facingR = false;
+    enemy.positionx  = Math.max(300, max - 150);
+    player.facingR   = true;
+    enemy.facingR    = false;
 
     setNames(player, enemy);
     applyEnemyVisual(enemy);
@@ -73,15 +70,14 @@ const setupCombat = (enemy) => {
     updateHealthBar(player, playerHealthBar, playerHPText);
     updateHealthBar(enemy, enemyHealthBar, enemyHPText);
 
-    resetCombat();
     hideEndScreen();
 
     let banner = '';
     if (session.mode === MODE_CAMPAIGN) {
         const lvl = getLevel(session.levelId);
         banner = `${lvl.name} — Combat ${session.fightIndex + 1}/${session.sequence.length}`;
-        if (enemy.kind === 'ultra') banner = `⚠️ ULTRA BOSS ⚠️ ${enemy.name}`;
-        else if (enemy.kind === 'boss') banner = `★ BOSS ★ ${enemy.name}`;
+        if (enemy.kind === 'ultra')      banner = `⚠️ ULTRA BOSS ⚠️ ${enemy.name}`;
+        else if (enemy.kind === 'boss')  banner = `★ BOSS ★ ${enemy.name}`;
     } else {
         banner = `Combat libre : ${enemy.name}`;
     }
@@ -101,7 +97,6 @@ const nextFightInSequence = () => {
     return session.sequence[session.fightIndex];
 };
 
-// Choix de l'ennemi en mode libre
 const pickEnemyFree = () => {
     const stored = localStorage.getItem('selectedEnemy');
     return allEnemies.find(e => e.name === stored) || allEnemies[0];
@@ -114,17 +109,16 @@ if (session.mode === MODE_CAMPAIGN) {
     setupCombat(pickEnemyFree());
 }
 
-// --- Boutons HTML existants (compat) ---
-window.testDeplacer = (direction) => deplacer(player, direction);
-window.testAttaquer = () => attaquer(player, session.currentEnemy);
-window.testAttaqueDistance = () => attaquerDistance(player, session.currentEnemy);
-window.testDefense = () => {
+window.testDeplacer       = (dir) => deplacer(player, dir);
+window.testAttaquer       = ()    => attaquer(player, session.currentEnemy);
+window.testAttaqueDistance= ()    => attaquerDistance(player, session.currentEnemy);
+window.testDefense        = ()    => {
     if (player.isDefending) desactiverDefense(player);
     else activerDefense(player);
 };
 
-// --- Contrôles clavier ---
 const keysHeld = new Set();
+
 window.addEventListener('keydown', (e) => {
     if (combatState.over) return;
     keysHeld.add(e.key);
@@ -138,6 +132,7 @@ window.addEventListener('keydown', (e) => {
             activerDefense(player); break;
     }
 });
+
 window.addEventListener('keyup', (e) => {
     keysHeld.delete(e.key);
     if ((e.key === 's' || e.key === 'S') && player.isDefending) {
@@ -145,18 +140,14 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// --- GAME LOOP ---
-let lastAITick = 0;
+let lastAITick  = 0;
 const AI_TICK_MS = 100;
 
 const gameLoop = (now) => {
     if (!combatState.over) {
-        if (keysHeld.has('ArrowLeft') || keysHeld.has('q') || keysHeld.has('Q')) {
-            deplacer(player, "gauche");
-        }
-        if (keysHeld.has('ArrowRight') || keysHeld.has('d') || keysHeld.has('D')) {
-            deplacer(player, "droite");
-        }
+        if (keysHeld.has('ArrowLeft')  || keysHeld.has('q') || keysHeld.has('Q')) deplacer(player, "gauche");
+        if (keysHeld.has('ArrowRight') || keysHeld.has('d') || keysHeld.has('D')) deplacer(player, "droite");
+
         if (now - lastAITick > AI_TICK_MS) {
             updateEnemyAI();
             lastAITick = now;
@@ -167,27 +158,29 @@ const gameLoop = (now) => {
 };
 requestAnimationFrame(gameLoop);
 
-// --- Sauvegarde ---
 const persistPlayer = () => {
     try {
         localStorage.setItem('playerProgress', JSON.stringify({
-            exp: player.exp, level: player.level, ptc: player.ptc,
-            maxHealth: player.maxHealth, strength: player.strength,
-            speed: player.speed, canShoot: player.canShoot,
+            exp:      player.exp,
+            level:    player.level,
+            ptc:      player.ptc,
+            maxHealth:player.maxHealth,
+            strength: player.strength,
+            speed:    player.speed,
+            canShoot: player.canShoot,
         }));
         if (session.mode === MODE_CAMPAIGN) {
             localStorage.setItem('campaignProgress', JSON.stringify({
-                levelId: session.levelId,
+                levelId:    session.levelId,
                 fightIndex: session.fightIndex,
             }));
         }
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
 };
 
-// --- Fin de combat ---
 const xpFor = (enemy) => {
     let xp = 25 + Math.floor(enemy.maxHealth / 4);
-    if (enemy.kind === 'boss') xp = Math.floor(xp * 1.5);
+    if (enemy.kind === 'boss')  xp = Math.floor(xp * 1.5);
     if (enemy.kind === 'ultra') xp *= 3;
     return xp;
 };
@@ -213,20 +206,15 @@ window.addEventListener('combatEnd', (e) => {
     }
     persistPlayer();
 
-    // Construction des actions de l'écran de fin selon le contexte
-    const actions = {};
-    const lvl = getLevel(session.levelId);
-    const isLast = session.fightIndex >= session.sequence.length - 1;
+    const actions  = {};
+    const lvl      = getLevel(session.levelId);
+    const isLast   = session.fightIndex >= session.sequence.length - 1;
 
     if (session.mode === MODE_CAMPAIGN && isPlayerWin) {
         if (!isLast) {
-            actions.onNext = () => {
-                const next = nextFightInSequence();
-                if (next) setupCombat(next);
-            };
+            actions.onNext    = () => { const next = nextFightInSequence(); if (next) setupCombat(next); };
             actions.nextLabel = `➡️ Combat suivant (${session.fightIndex + 2}/${session.sequence.length})`;
         } else {
-            // Niveau terminé
             const wasNew = unlockNextLevelIfNeeded();
             if (session.levelId < LEVELS.length) {
                 actions.onNext = () => {
@@ -243,24 +231,20 @@ window.addEventListener('combatEnd', (e) => {
         }
     }
 
-    actions.onReplay = () => {
-        // Rejouer le même combat
-        setupCombat(enemy);
-    };
+    actions.onReplay = () => setupCombat(enemy);
     actions.onLevels = () => { window.location.href = 'index.html#levels'; };
-    actions.onHome = () => { window.location.href = 'index.html'; };
+    actions.onHome   = () => { window.location.href = 'index.html'; };
     actions.onSkills = () => { window.location.href = 'Skills.html'; };
 
     showEndScreen({
-        winnerName: winner.name,
-        isVictory: isPlayerWin,
-        levelName: lvl.name,
+        winnerName:   winner.name,
+        isVictory:    isPlayerWin,
+        levelName:    lvl.name,
         progressText: `${session.fightIndex + 1}/${session.sequence.length}`,
-        xpGained: isPlayerWin ? xpFor(enemy) : 0,
-        playerLevel: player.level,
-        playerPts: player.ptc,
+        xpGained:     isPlayerWin ? xpFor(enemy) : 0,
+        playerLevel:  player.level,
+        playerPts:    player.ptc,
     }, actions);
 });
 
-// Met à jour la barre de vie du joueur si stats restaurées
 updateHealthBar(player, playerHealthBar, playerHPText);
