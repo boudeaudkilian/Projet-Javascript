@@ -164,3 +164,43 @@ h2 {
 .reset-btn:hover {
     background: #222;
 }
+/* ===== Bandeau de statut RPG sur la page Compétences ===== */
+.rpg-status {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid #FFD700;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 1.25rem;
+}
+.rpg-status-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+.rpg-status-level b { color: #FFD700; font-size: 18px; }
+.rpg-status-pts   b { color: #9be8ff; }
+.rpg-status-xp {
+    position: relative;
+    height: 14px;
+    background: #222;
+    border: 1px solid #555;
+    border-radius: 7px;
+    overflow: hidden;
+}
+.rpg-status-xp-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4FC3F7, #1976D2);
+    transition: width 0.4s ease;
+}
+.rpg-status-xp-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    text-shadow: 0 1px 2px #000;
+}

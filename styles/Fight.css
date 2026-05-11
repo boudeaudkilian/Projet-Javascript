@@ -668,3 +668,95 @@ body {
     color: #1a1a2e;
 }
 #end-overlay .end-buttons button.primary:hover { filter: brightness(1.05); }
+
+/* ===== HUD RPG : Niveau + barre d'XP en haut de l'écran ===== */
+#rpg-hud {
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid #FFD700;
+    border-radius: 10px;
+    color: #fff;
+    font-family: sans-serif;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.5);
+}
+.rpg-level { font-weight: 700; color: #FFD700; }
+.rpg-points { font-size: 14px; color: #9be8ff; }
+.rpg-xp-container {
+    position: relative;
+    width: 220px;
+    height: 16px;
+    background: #222;
+    border: 1px solid #555;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.rpg-xp-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4FC3F7, #1976D2);
+    transition: width 0.4s ease;
+}
+.rpg-xp-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #fff;
+    text-shadow: 0 1px 2px #000;
+}
+
+/* "+25 XP" qui flotte */
+.xp-floating {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-weight: 800;
+    font-size: 22px;
+    text-shadow: 0 2px 6px #000;
+    pointer-events: none;
+    animation: xp-float 1.4s ease-out forwards;
+    z-index: 90;
+}
+@keyframes xp-float {
+    0%   { opacity: 0; transform: translate(-50%, 0); }
+    20%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -80px); }
+}
+
+/* Toast LEVEL UP */
+.level-up-toast {
+    position: fixed;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    color: #1a1a1a;
+    padding: 22px 40px;
+    border-radius: 16px;
+    font-family: sans-serif;
+    text-align: center;
+    z-index: 200;
+    box-shadow: 0 10px 40px rgba(255, 165, 0, 0.6);
+    animation: lu-pop 2.2s ease forwards;
+}
+.level-up-toast .lu-title { font-size: 28px; font-weight: 900; letter-spacing: 2px; }
+.level-up-toast .lu-sub   { font-size: 14px; margin-top: 4px; }
+@keyframes lu-pop {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    35%  { transform: translate(-50%, -50%) scale(1); }
+    80%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
