@@ -14,8 +14,17 @@ import {
     applyEnemyVisual,
     logToConsole, getArenaBounds, showEndScreen, hideEndScreen,
     showBanner,
+    updateXPBar, showXPGain, showLevelUpToast,
 } from './visuel.js';
 import { gainExp } from './Skills.js';
+
+// Écoute l'évènement émis par gainExp() — séparation logique/UI
+window.addEventListener('levelUp', (e) => {
+    showLevelUpToast(e.detail.newLevel);
+    logToConsole(`⭐ LEVEL UP ! Niveau ${e.detail.newLevel} (+${e.detail.levelsGained} niveau(x))`);
+    updateXPBar(player);
+    updateHealthBar(player, playerHealthBar, playerHPText);
+});
 
 try {
     const saved = JSON.parse(localStorage.getItem('playerProgress') || 'null');
@@ -201,7 +210,9 @@ window.addEventListener('combatEnd', (e) => {
 
     if (isPlayerWin) {
         const xp = xpFor(enemy);
-        gainExp(xp);
+        gainExp(xp);                 // logique : ajoute l'XP, déclenche level up
+        showXPGain(xp);              // visuel : "+XP" qui flotte
+        updateXPBar(player);         // visuel : remplit la barre d'XP du HUD
         logToConsole(`+${xp} XP ! Niveau ${player.level} (pts: ${player.ptc})`);
     }
     persistPlayer();
@@ -248,3 +259,4 @@ window.addEventListener('combatEnd', (e) => {
 });
 
 updateHealthBar(player, playerHealthBar, playerHPText);
+updateXPBar(player); // initialise le HUD d'XP au chargement

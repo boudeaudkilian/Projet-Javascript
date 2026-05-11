@@ -184,6 +184,43 @@ const hideEndScreen = () => {
     if (overlay) overlay.classList.remove('visible');
 };
 
+// ===== AFFICHAGE BARRE D'XP & NIVEAU (HUD RPG) =====
+// On lit la fonction xpForNextLevel depuis Skills.js pour rester DRY
+// (Don't Repeat Yourself : la règle de calcul existe à un seul endroit).
+import { xpForNextLevel } from './Skills.js';
+
+const updateXPBar = (player) => {
+    const need   = xpForNextLevel(player.level);
+    const pct    = Math.max(0, Math.min(100, (player.exp / need) * 100));
+    const barEl  = document.getElementById('rpg-xp-bar');
+    const txtEl  = document.getElementById('rpg-xp-text');
+    const lvlEl  = document.getElementById('rpg-level-num');
+    const ptsEl  = document.getElementById('rpg-points-num');
+    if (barEl) barEl.style.width = pct + '%';
+    if (txtEl) txtEl.textContent = `${player.exp} / ${need} XP`;
+    if (lvlEl) lvlEl.textContent = player.level;
+    if (ptsEl) ptsEl.textContent = player.ptc;
+};
+
+// Petite animation "+XP" qui flotte au-dessus du joueur
+const showXPGain = (amount) => {
+    const el = document.createElement('div');
+    el.className = 'xp-floating';
+    el.textContent = `+${amount} XP`;
+    arenaEl.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
+};
+
+// Toast plein écran "LEVEL UP !"
+const showLevelUpToast = (newLevel) => {
+    const el = document.createElement('div');
+    el.className = 'level-up-toast';
+    el.innerHTML = `<div class="lu-title">⭐ LEVEL UP ⭐</div>
+                    <div class="lu-sub">Niveau ${newLevel} — +1 point de compétence</div>`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+};
+
 export {
     playerElement, enemyElement,
     playerHealthBar, enemyHealthBar,
@@ -194,4 +231,5 @@ export {
     logToConsole, flashDamage, playAttackAnim, knockback,
     spawnProjectileElement, updateProjectileElement, removeProjectileElement,
     getArenaBounds, showEndScreen, hideEndScreen,
+    updateXPBar, showXPGain, showLevelUpToast,
 };

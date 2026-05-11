@@ -1,5 +1,5 @@
 import { player } from "./Character.js";
-import { skills, unlockSkill } from "./Skills.js";
+import { skills, unlockSkill, xpForNextLevel } from "./Skills.js";
 
 // Restaure la progression sauvegardée
 try {
@@ -36,10 +36,24 @@ function showMsg(text) {
 
 function refreshUI() {
     document.getElementById("pts-display").textContent     = player.ptc;
-    document.getElementById("player-name").textContent     = player.name;
-    document.getElementById("player-life").textContent     = player.maxHealth;
-    document.getElementById("player-strength").textContent = player.strength;
-    document.getElementById("player-speed").textContent    = player.speed;
+    // Statut RPG (niveau + XP)
+    const lvlEl = document.getElementById("status-level");
+    const xpBar = document.getElementById("status-xp-bar");
+    const xpTxt = document.getElementById("status-xp-text");
+    if (lvlEl) lvlEl.textContent = player.level;
+    if (xpBar && xpTxt) {
+        const need = xpForNextLevel(player.level);
+        xpBar.style.width = Math.max(0, Math.min(100, (player.exp / need) * 100)) + "%";
+        xpTxt.textContent = `${player.exp} / ${need} XP`;
+    }
+    const nameEl = document.getElementById("player-name");
+    const lifeEl = document.getElementById("player-life");
+    const strEl  = document.getElementById("player-strength");
+    const spdEl  = document.getElementById("player-speed");
+    if (nameEl) nameEl.textContent = player.name;
+    if (lifeEl) lifeEl.textContent = player.maxHealth;
+    if (strEl)  strEl.textContent  = player.strength;
+    if (spdEl)  spdEl.textContent  = player.speed;
 
     for (const key in skills) {
         const s     = skills[key];
