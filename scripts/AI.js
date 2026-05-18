@@ -1,6 +1,6 @@
 // ===== IA ENNEMIE =====
 import { player } from './Character.js';
-import { attaquer, attaquerDistance, deplacer, combatState } from './combat.js';
+import { attaquer, attaquerDistance, deplacer, combatState } from './Fight.js';
 
 const updateEnemyAI = () => {
     const enemy = combatState.enemy;

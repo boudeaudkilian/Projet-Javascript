@@ -7,7 +7,7 @@ import {
     logToConsole, flashDamage, playAttackAnim, knockback,
     spawnProjectileElement, updateProjectileElement, removeProjectileElement,
     getArenaBounds, showEndScreen,
-} from './visuel.js';
+} from './Visual.js';
 import { player } from './Character.js';
 
 const combatState = {

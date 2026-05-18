@@ -41,12 +41,15 @@ function loadGame() {
         player.currentHealth = save.player.currentHealth ?? player.maxHealth;
         player.canShoot      = save.player.canShoot      ?? player.canShoot;
 
-        for (const key in save.skills) {
-            if (skills[key]) {
-                skills[key].unlocked  = save.skills[key].unlocked;
-                skills[key].available = save.skills[key].available;
+        if (save.skills) {
+            for (const key in save.skills) {
+                if (skills[key]) {
+                    skills[key].unlocked  = save.skills[key].unlocked;
+                    skills[key].available = save.skills[key].available;
+                }
             }
         }
+        refreshAvailability();
     } catch (e) {
         localStorage.removeItem(SAVE_KEY);
     }
@@ -131,6 +134,45 @@ window.resetTree = function() {
     saveGame();
     refreshUI();
     showMsg("Arbre réinitialisé.");
+};
+
+
+window.fullResetGame = function() {
+    if (!confirm("Nouvelle partie ?\nXP, niveau, points et compétences seront remis à zéro.")) return;
+
+    // 1) Nettoyage du stockage
+    [
+        'playerProgress',
+        'campaignProgress',
+        'maxUnlockedLevel',
+        'selectedEnemy',
+        'selectedLevel',
+        'gameMode',
+        'stickmanSave',
+    ].forEach(k => localStorage.removeItem(k));
+
+    // 2) Reset en mémoire (au cas où on resterait sur la page)
+    player.level         = 1;
+    player.exp           = 0;
+    player.ptc           = 1;
+    player.maxHealth     = 100;
+    player.currentHealth = 100;
+    player.strength      = 10;
+    player.speed         = 6;
+    player.canShoot      = false;
+
+    // 3) Verrouille tout l'arbre
+    for (const key in skills) {
+        skills[key].unlocked  = false;
+        skills[key].available = skills[key].unlockedBy === null;
+    }
+
+    // 4) UI + rester hors combat
+    localStorage.setItem('maxUnlockedLevel', '1');
+    localStorage.setItem('selectedLevel', '1');
+    localStorage.setItem('gameMode', 'campaign');
+    refreshUI();
+    showMsg("Partie réinitialisée — lance Reprendre pour jouer.");
 };
 
 loadGame();
