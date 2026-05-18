@@ -41,12 +41,15 @@ function loadGame() {
         player.currentHealth = save.player.currentHealth ?? player.maxHealth;
         player.canShoot      = save.player.canShoot      ?? player.canShoot;
 
-        for (const key in save.skills) {
-            if (skills[key]) {
-                skills[key].unlocked  = save.skills[key].unlocked;
-                skills[key].available = save.skills[key].available;
+        if (save.skills) {
+            for (const key in save.skills) {
+                if (skills[key]) {
+                    skills[key].unlocked  = save.skills[key].unlocked;
+                    skills[key].available = save.skills[key].available;
+                }
             }
         }
+        refreshAvailability();
     } catch (e) {
         localStorage.removeItem(SAVE_KEY);
     }
@@ -145,6 +148,7 @@ window.fullResetGame = function() {
         'selectedEnemy',
         'selectedLevel',
         'gameMode',
+        'stickmanSave',
     ].forEach(k => localStorage.removeItem(k));
 
     // 2) Reset en mémoire (au cas où on resterait sur la page)
@@ -163,10 +167,13 @@ window.fullResetGame = function() {
         skills[key].available = skills[key].unlockedBy === null;
     }
 
-    // 4) UI + retour accueil
+    // 4) UI + rester hors combat
+    localStorage.setItem('maxUnlockedLevel', '1');
+    localStorage.setItem('selectedLevel', '1');
+    localStorage.setItem('gameMode', 'campaign');
     refreshUI();
-    showMsg("Partie réinitialisée — XP et niveau remis à zéro.");
-    setTimeout(() => { window.location.href = './index.html'; }, 800);
+    showMsg("Partie réinitialisée — lance Reprendre pour jouer.");
 };
 
+loadGame();
 refreshUI();
