@@ -64,12 +64,13 @@ function fullReset() {
         'selectedEnemy',
         'selectedLevel',
         'gameMode',
+        'stickmanSave',
     ];
     keysToClear.forEach(k => localStorage.removeItem(k));
     // Valeurs de départ
     localStorage.setItem('maxUnlockedLevel', '1');
     localStorage.setItem('selectedLevel',    '1');
-    localStorage.setItem('gameMode',         'campaign');
+    localStorage.setItem('gameMode', 'campaign');
 }
 
 
@@ -77,7 +78,7 @@ function fullReset() {
 document.getElementById('newGameBtn').addEventListener('click', () => {
     if (!confirm('Nouvelle partie ?\nXP, niveau, points et compétences seront remis à zéro.')) return;
     fullReset();
-    window.location.href = './Fight.html';
+    showScreen('mainMenu');
 });
 
 document.getElementById('resumeBtn').addEventListener('click', () => {
