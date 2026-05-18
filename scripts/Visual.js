@@ -174,7 +174,7 @@ const showEndScreen = (info, actions = {}) => {
     addBtn('🔁 Rejouer ce combat', actions.onReplay || (() => window.location.reload()));
     if (actions.onSkills) addBtn('🌳 Compétences', actions.onSkills);
     if (actions.onLevels) addBtn('🗺️ Niveaux', actions.onLevels);
-    addBtn('🏠 Accueil', actions.onHome || (() => (window.location.href = 'index.html')));
+    addBtn('🏠 Accueil', actions.onHome || (() => (window.location.href = 'Index.html')));
 
     overlay.classList.add('visible');
 };

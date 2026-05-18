@@ -4,8 +4,8 @@ import {
     activerDefense, desactiverDefense,
     setEnemy, updateProjectiles, combatState,
     resetCombat,
-} from './combat.js';
-import { updateEnemyAI } from './ia.js';
+} from './Fight.js';
+import { updateEnemyAI } from './AI.js';
 import {
     playerElement, enemyElement,
     playerHealthBar, enemyHealthBar,
@@ -15,7 +15,7 @@ import {
     logToConsole, getArenaBounds, showEndScreen, hideEndScreen,
     showBanner,
     updateXPBar, showXPGain, showLevelUpToast,
-} from './visuel.js';
+} from './Visual.js';
 import { gainExp } from './Skills.js';
 
 // Écoute l'évènement émis par gainExp() — séparation logique/UI
@@ -250,8 +250,8 @@ window.addEventListener('combatEnd', (e) => {
     }
 
     actions.onReplay = () => setupCombat(enemy);
-    actions.onLevels = () => { window.location.href = 'index.html#levels'; };
-    actions.onHome   = () => { window.location.href = 'index.html'; };
+    actions.onLevels = () => { window.location.href = 'Index.html#levels'; };
+    actions.onHome   = () => { window.location.href = 'Index.html'; };
     actions.onSkills = () => { window.location.href = 'Skills.html'; };
 
     showEndScreen({
