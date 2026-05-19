@@ -1,6 +1,6 @@
 # Stickman RPG — Module Combat
 
-Partie **système de combat** du projet Stickman RPG (HTML/CSS/JS vanilla, conforme au cahier des charges).
+Pour lancer le jeux tapez dans votre terminal la ligne suivante : node Server.js
 
 ##  Structure
 
